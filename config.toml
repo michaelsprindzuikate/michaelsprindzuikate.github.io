@@ -1,4 +1,5 @@
-baseURL = "michaelsprindzuikate.github.io"
+baseURL = "/"
 languageCode = "en-us"
 title = "michael s."
 theme = "PaperMod"
+publishDir = "docs"

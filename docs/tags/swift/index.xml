@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>swift on michael s.</title>
-    <link>michaelsprindzuikate.github.io/tags/swift/</link>
+    <link>/tags/swift/</link>
     <description>Recent content in swift on michael s.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 21 Jan 2021 21:20:07 +0000</lastBuildDate><atom:link href="michaelsprindzuikate.github.io/tags/swift/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 21 Jan 2021 21:20:07 +0000</lastBuildDate><atom:link href="/tags/swift/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Dictionary Abuse</title>
-      <link>michaelsprindzuikate.github.io/posts/dictionary-abuse/</link>
+      <link>/posts/dictionary-abuse/</link>
       <pubDate>Thu, 21 Jan 2021 21:20:07 +0000</pubDate>
       
-      <guid>michaelsprindzuikate.github.io/posts/dictionary-abuse/</guid>
+      <guid>/posts/dictionary-abuse/</guid>
       <description>Example One: Simple The dictionary! A simple concept - thing has a key and a value and you use one to extract the other. Like how when you were younger, you&amp;rsquo;d use a dictionary to extract all of the swear words.
 Developers use them all the time because they&amp;rsquo;re simple to understand, flexible and consistent in their behaviour.
 If you&amp;rsquo;re not too familiar with dictionaries though, here&amp;rsquo;s a simple example.</description>
