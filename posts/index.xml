@@ -6,7 +6,17 @@
     <description>Recent content in Posts on michael s.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 21 Jan 2021 21:20:07 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 26 Jan 2021 10:16:06 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Social Medium</title>
+      <link>/posts/social-medium/</link>
+      <pubDate>Tue, 26 Jan 2021 10:16:06 +0000</pubDate>
+      
+      <guid>/posts/social-medium/</guid>
+      <description>Stats Are Not My Friend Part of the motivation for me to start writing posts here under my own space is down to two things:
+ I can have more control over what I post and how it looks I don&amp;rsquo;t have any analytics  Sure, it&amp;rsquo;s more complicated and time consuming to create, edit and publish new words here, and Medium.com gives me a really nice user experience to write in, but point #2 is the most pertinent.</description>
+    </item>
+    
     <item>
       <title>Abusing Dictionaries in Swift in Six Simple Examples</title>
       <link>/posts/dictionary-abuse/</link>

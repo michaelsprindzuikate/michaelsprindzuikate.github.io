@@ -3,27 +3,37 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/</loc>
+    <lastmod>2021-01-26T10:16:06+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/posts/</loc>
+    <lastmod>2021-01-26T10:16:06+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/posts/social-medium/</loc>
+    <lastmod>2021-01-26T10:16:06+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2021-01-26T10:16:06+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/thoughts/</loc>
+    <lastmod>2021-01-26T10:16:06+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/posts/dictionary-abuse/</loc>
     <lastmod>2021-01-21T21:20:07+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2021-01-21T21:20:07+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/posts/</loc>
-    <lastmod>2021-01-21T21:20:07+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/tags/swift/</loc>
-    <lastmod>2021-01-21T21:20:07+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
     <lastmod>2021-01-21T21:20:07+00:00</lastmod>
   </url>
   
