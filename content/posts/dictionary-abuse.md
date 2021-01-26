@@ -1,12 +1,13 @@
 ---
-title: "Dictionary Abuse"
+title: "Abusing Dictionaries in Swift in Six Simple Examples"
+description: "Adventures in Data Structures"
 date: 2021-01-21T21:20:07Z
 tags: ["swift"]
 draft: false
 ---
 
 
-![Egg box](/images/egg_box.jpg "This isn't a picture of an egg box, it's a metaphore")
+![Egg box](/images/egg_box.jpg "This isn't a picture of an egg box, it's a metaphor")
 
 
 ## Example One: Simple
@@ -44,7 +45,9 @@ Like so:
 
     print(craigsDesktopCredential) // "Password2"
 
-But don't do this, it's horrible. It requires you to know the exact data types of each value in the dictionary and what's the point of that.
+But don't do this, it's horrible. 
+
+It requires you to know the exact data types of each value in the dictionary and what's the point of that.
 
 ## Example Three: Structures
 
@@ -150,7 +153,7 @@ What if Tim likes rude jokes? Well, we can do like we did with the password gene
         static func tell(rudeOnes: Bool = false) -> String {
             
             if rudeOnes {
-                return "What do you call a **** with a **** *** ****? A ***** "
+                return "**** **** with a **** *** ****? A ***** "
             }
             
             return "Why did the chicken cross the road? To get to the other side"
@@ -181,7 +184,7 @@ But let's change that now.
 
 ## Example Six: Logic
 
-One of the intersting things we can do here, is to use a dictionary to replace branches of logic. In use cases, where we have a defined set of behaviours that we *expect* to happen and *known results*, then a dictionary can help to reduce complexity.
+One of the interesting things we can do here, is to use a dictionary to replace branches of logic. In use cases, where we have a defined set of behaviours that we *expect* to happen and *known results*, then a dictionary can help to reduce complexity.
 
 Take an if-else statement. Here, you are taking an assertion and seeing if it evalutes to true. If so, run some code. If not, check the next assertion and do the same thing.
 

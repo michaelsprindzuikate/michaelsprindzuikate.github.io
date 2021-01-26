@@ -1,7 +1,8 @@
 ---
 title: "Timing Is Everything"
+description: "You are currently [Writer] #482 in the queue."
 date: 2021-01-19T21:23:37Z
-tags: ["intro"]
+tags: [""]
 draft: false
 ---
 
@@ -16,7 +17,7 @@ I've been loathe to start one of these things for a number of reasons and they n
 * What if people don't like/care about what I have to say?
 * Can I be bothered to go through the effort of making a website?
 
-The answer to the first question is a very succinct "not a huge amount". But that's ok, I think. 
+The answer to the first question is a very succinct "probably not a huge amount". But that's ok, I think. 
 
 Questions two and three? Hey, let's see what we get. You don't know if you don't try.
 
@@ -25,5 +26,3 @@ And question four's answer is.... I very much cannot be bothered, hence why it's
 So without further ado....
 
 **hello, world**
-
-Mike

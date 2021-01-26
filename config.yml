@@ -1,0 +1,34 @@
+baseURL: "/"
+languageCode: "en-us"
+title: "michael s."
+theme: "PaperMod"
+publishDir: "docs"
+
+params:
+    env: production # to enable google analytics, opengraph, twitter-cards and schema.
+    title: michael s.
+    description: "michael s. place of wordship"
+    author: 
+
+    homeInfoParams:
+        Title: michael s.
+        Content: Hi. Here’s the things I’ve written.
+
+    defaultTheme: auto # dark, light
+    disableThemeToggle: false
+
+    ShowReadingTime: true
+    ShowShareButtons: true
+    disableSpecial1stPost: false
+    comments: false
+    hidemeta: false
+    showtoc: false
+    tocopen: false
+
+    socialIcons:
+        - name: GitHub
+          url: "https://www.github.com/michaelsprindzuikate"
+        - name: LinkedIn
+          url: "https://www.linkedin.com/in/mispri/"
+        - name: RSS
+          url: "https://michaelsprindzuikate.github.io/index.xml"
