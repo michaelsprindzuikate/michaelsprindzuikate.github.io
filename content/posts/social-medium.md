@@ -3,12 +3,11 @@
 title: "Social Medium"
 description: "My Space."
 date: 2021-01-26T17:00:07Z
-tags: [""]
 draft: false
 ---
 
 
-![Stock Exchange board showing codes and values](/images/stock-market.png "Likes are currently trending 0.5 percentage points over hearts this quarter")
+![Stock Exchange board showing codes and values](/images/stock-market.png#center "Likes are currently trending 0.5 percentage points over hearts this quarter")
 
 ## Stats Are Not My Friend
 

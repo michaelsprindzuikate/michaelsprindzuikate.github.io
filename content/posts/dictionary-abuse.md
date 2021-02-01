@@ -2,12 +2,11 @@
 title: "Abusing Dictionaries in Swift in Six Simple Examples"
 description: "Adventures in Data Structures"
 date: 2021-01-21T21:20:07Z
-tags: ["swift"]
 draft: false
 ---
 
 
-![Egg box](/images/egg_box.jpg "This isn't a picture of an egg box, it's a metaphor")
+![Egg box](/images/egg_box.jpg#center "This isn't a picture of an egg box, it's a metaphor")
 
 
 ## Example One: Simple
@@ -53,7 +52,7 @@ It requires you to know the exact data types of each value in the dictionary and
 
 One other thing about dictionaries that is just *groovy* is that you're not restricted to using primitives as the value types. 
 
-> **Sidebar**: It should be noted that in Swift, there isn't really the concept of primitives. All objects are just objects and are considered the same citizen in the eyes of the language. How progressive.
+> **Sidebar**: It should be noted that in Swift, there isn't really the concept of primitives. All objects are just objects and are considered the same in the eyes of the language.
 
 What I mean, is that you're not restricted to setting the value types as being the default data types of Int, Float, Double, String, Bool, etc.. you can use anything you please.
 

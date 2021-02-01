@@ -2,11 +2,10 @@
 title: "Timing Is Everything"
 description: "You are currently [Writer] #482 in the queue."
 date: 2021-01-19T21:23:37Z
-tags: [""]
 draft: false
 ---
 
-![Queue of people, black and white photo](/images/queue_bw.jpg "Is this the line for putting yourself out there?")
+![Queue of people, black and white photo](/images/queue_bw.jpg#center "Is this the line for putting yourself out there?")
 
 # And I guess the question is "Why now?".
 
