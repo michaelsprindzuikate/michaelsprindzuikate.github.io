@@ -1,6 +1,6 @@
 ---
 title: "Timing Is Everything"
-description: "You are currently [Writer] #482 in the queue."
+description: "You are currently Writer #482 in the queue."
 date: 2021-01-19T21:23:37Z
 draft: false
 ---

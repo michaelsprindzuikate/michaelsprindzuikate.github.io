@@ -2,17 +2,33 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>michael s.</title>
-    <link>/</link>
+    <link>https://michaelsprindzuikate.github.io/</link>
     <description>Recent content on michael s.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 01 Feb 2021 12:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 01 Mar 2021 12:00:00 +0000</lastBuildDate><atom:link href="https://michaelsprindzuikate.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Rewriting the Map</title>
+      <link>https://michaelsprindzuikate.github.io/posts/understanding-generic-functions/</link>
+      <pubDate>Mon, 01 Mar 2021 12:00:00 +0000</pubDate>
+      
+      <guid>https://michaelsprindzuikate.github.io/posts/understanding-generic-functions/</guid>
+      <description>Not sure you can get any more generic than this  One thing I&amp;rsquo;m often asked rhetorically by imaginary colleagues with the sole purpose of providing a blog post with context is
+ Generics? They&amp;rsquo;re super complicated, aren&amp;rsquo;t they?
+ And my answer is most definitely
+ You bet!
+Well, kinda.
+Well, maybe.
+Well, not strictly, but I can see what you mean.
+ One of the ways that it can be useful to understand and appreciate the value (some may even dare to say beauty) of generics is by taking a look at some of the built in generic functions in Swift and attempting to duplicate that same functionality ourselves.</description>
+    </item>
+    
     <item>
       <title>How the Coordinator Pattern Broke My Brain</title>
-      <link>/posts/coordinators-brain-soup/</link>
+      <link>https://michaelsprindzuikate.github.io/posts/coordinators-brain-soup/</link>
       <pubDate>Mon, 01 Feb 2021 12:00:00 +0000</pubDate>
       
-      <guid>/posts/coordinators-brain-soup/</guid>
+      <guid>https://michaelsprindzuikate.github.io/posts/coordinators-brain-soup/</guid>
       <description>Introduction. This was originally a presentation that I’d put together in early 2020 back before we entered a global pandemic.
 So please imagine that we’re in a 80% full auditorium (I’m not greedy), the chairs are comfy and the host for the event has told some light hearted jokes to ease you into proceedings.
  “Up next is Michael to talk about Coordinators….”
@@ -21,30 +37,30 @@ So please imagine that we’re in a 80% full auditorium (I’m not greedy), the 
     
     <item>
       <title>Social Medium</title>
-      <link>/posts/social-medium/</link>
+      <link>https://michaelsprindzuikate.github.io/posts/social-medium/</link>
       <pubDate>Tue, 26 Jan 2021 17:00:07 +0000</pubDate>
       
-      <guid>/posts/social-medium/</guid>
+      <guid>https://michaelsprindzuikate.github.io/posts/social-medium/</guid>
       <description>Likes are currently trending 0.5 percentage points over hearts this quarter  Stats Are Not My Friend Part of the motivation for me to start writing posts here under my own space is down to two things:
  I can have more control over what I post and how it looks I don’t have any analytics  Sure, it’s more complicated and time consuming to create, edit and publish new words here, and Medium.</description>
     </item>
     
     <item>
       <title>Abusing Dictionaries in Swift in Six Simple Examples</title>
-      <link>/posts/dictionary-abuse/</link>
+      <link>https://michaelsprindzuikate.github.io/posts/dictionary-abuse/</link>
       <pubDate>Thu, 21 Jan 2021 21:20:07 +0000</pubDate>
       
-      <guid>/posts/dictionary-abuse/</guid>
+      <guid>https://michaelsprindzuikate.github.io/posts/dictionary-abuse/</guid>
       <description>This isn&amp;#39;t a picture of an egg box, it&amp;#39;s a metaphor  Example One: Simple The dictionary! A simple concept - thing has a key and a value and you use one to extract the other. Like how when you were younger, you&amp;rsquo;d use a dictionary to extract all of the swear words.
 Developers use them all the time because they&amp;rsquo;re simple to understand, flexible and consistent in their behaviour.</description>
     </item>
     
     <item>
       <title>Timing Is Everything</title>
-      <link>/posts/timing-is-everything/</link>
+      <link>https://michaelsprindzuikate.github.io/posts/timing-is-everything/</link>
       <pubDate>Tue, 19 Jan 2021 21:23:37 +0000</pubDate>
       
-      <guid>/posts/timing-is-everything/</guid>
+      <guid>https://michaelsprindzuikate.github.io/posts/timing-is-everything/</guid>
       <description>Is this the line for putting yourself out there?  And I guess the question is &amp;ldquo;Why now?&amp;rdquo;. I&amp;rsquo;ve been loathe to start one of these things for a number of reasons and they normally fall into this order:
  What do I really have to say? Why would anyone care what I have to say? What if people don&amp;rsquo;t like/care about what I have to say? Can I be bothered to go through the effort of making a website?</description>
     </item>

@@ -247,7 +247,7 @@ But on the flip side, when I was able to get an implementation that ticked all o
 In software development, the implementation is there to satisfy the behaviour that you want to occur.  
 I had to keep that in mind every time I tried to let existing code influence or constrain how I attained that behaviour, even if it meant putting everything in the bin.
 
-## Final words.
+## Wrap Up
 There you have it, this is what I presented once and may present again.
 
 I hope there is something in this that you find useful, even if it’s only in knowing that there is at least one person working in a professional capacity that wasn’t able to grasp the concept of coordinators without losing their mind.

@@ -1,4 +1,4 @@
-baseURL: "/"
+baseURL: "https://michaelsprindzuikate.github.io"
 languageCode: "en-us"
 title: "michael s."
 theme: "PaperMod"
@@ -11,14 +11,14 @@ params:
     author: 
 
     homeInfoParams:
-        Title: michael s.
-        Content: Hi. Here’s the things I’ve written.
+        Title: hello, world.
+        Content: Thoughts and Things on Allsorts of Things
 
     defaultTheme: auto # dark, light
     disableThemeToggle: false
 
     ShowReadingTime: true
-    ShowShareButtons: true
+    ShowShareButtons: false
     disableSpecial1stPost: false
     comments: false
     hidemeta: false

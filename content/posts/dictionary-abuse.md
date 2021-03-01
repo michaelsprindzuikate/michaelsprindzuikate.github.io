@@ -254,7 +254,7 @@ And as well as reducing the complexity of the compiler, it can also make it easi
 
 What do you think?
 
-## Conclusion
+## Wrap Up
 
 Being _declarative_ and upfront with what we want to happen can help us to define the behaviours in our code, capture failure states more gracefully all whilst reducing the number of lines of code.
 
