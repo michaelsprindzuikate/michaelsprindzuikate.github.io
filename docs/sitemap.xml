@@ -1,48 +1,30 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>https://michaelsprindzuikate.github.io/</loc>
     <lastmod>2021-03-01T12:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://michaelsprindzuikate.github.io/posts/</loc>
     <lastmod>2021-03-01T12:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://michaelsprindzuikate.github.io/posts/understanding-generic-functions/</loc>
     <lastmod>2021-03-01T12:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://michaelsprindzuikate.github.io/posts/coordinators-brain-soup/</loc>
     <lastmod>2021-02-01T12:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://michaelsprindzuikate.github.io/posts/social-medium/</loc>
     <lastmod>2021-01-26T17:00:07+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://michaelsprindzuikate.github.io/posts/dictionary-abuse/</loc>
     <lastmod>2021-01-21T21:20:07+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://michaelsprindzuikate.github.io/posts/timing-is-everything/</loc>
     <lastmod>2021-01-19T21:23:37+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://michaelsprindzuikate.github.io/categories/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://michaelsprindzuikate.github.io/tags/</loc>
   </url>
-  
 </urlset>
