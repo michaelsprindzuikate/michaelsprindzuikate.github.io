@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Refactoring | michael s.</title>
+
+<meta name="keywords" content="" />
+<meta name="description" content="Death by a Thousand Cuts">
+<meta name="author" content="">
+<link rel="canonical" href="https://michaelsprindzuikate.github.io/posts/refactoring-into-the-equation/" />
+<link href="/assets/css/stylesheet.min.2e1fbb977451e874d76d824bd1c7ed2a.css" integrity="md5-Lh&#43;7l3RR6HTXbYJL0cftKg==" rel="preload stylesheet"
+    as="style">
+
+<link rel="icon" href="https://michaelsprindzuikate.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://michaelsprindzuikate.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://michaelsprindzuikate.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://michaelsprindzuikate.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://michaelsprindzuikate.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.81.0" />
+
+
+<meta property="og:title" content="Refactoring" />
+<meta property="og:description" content="Death by a Thousand Cuts" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://michaelsprindzuikate.github.io/posts/refactoring-into-the-equation/" />
+<meta property="article:published_time" content="2021-05-01T12:00:00+00:00" />
+<meta property="article:modified_time" content="2021-05-01T12:00:00+00:00" /><meta property="og:site_name" content="michael s." />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Refactoring"/>
+<meta name="twitter:description" content="Death by a Thousand Cuts"/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Refactoring",
+  "name": "Refactoring",
+  "description": "Just a little off the top, please  Over the past year, alongside our regular app releases, my team and I have been working on a new version of our app which features, amongst other …",
+  "keywords": [
+    
+  ],
+  "articleBody": "  Just a little off the top, please  Over the past year, alongside our regular app releases, my team and I have been working on a new version of our app which features, amongst other things, an improved user experience to make it easier to navigate and more responsive for users.\nNow, this is a project with…let’s call it “heritage”. The origins date back to 2016, written in a fresh new language, Swift and with that comes the elephant in the room.. legacy code. Legacy code doesn’t equate to bad code, sometimes far from it. However, one thing that legacy code is a synonym for is “old requirements”.\nThe requirements that the original implementation satisfied, over time will normally be updated, extended, overruled or even forgotten. Unless a team are actively engaged in continuous refinement and improvement of the project health, the problem of legacy code is less about the number of lines written in a particular class or function. The problem is about how that code conveys it’s intent.\nA developer coming into the project without the benefit of being the author of that original code might find it difficult to infer the intent of what is before them if it has been augmented over time with layers of conditional logic or unique, arbitrary behaviour.\nThere are a lot of books and blog posts on the topic of working with legacy code and they cover far more detail than I can here. What I would like to do is highlight the four main techniques we use while refactoring our product to keep it as manageable as possible.\nIn no particular order or preference, I give you..\nNaming Other than the titles of technology-based blog posts; variables, functions and structures are the hardest thing to name correctly.\nWhen looking at adapting an existing object, it can be useful to rename properties or function names to better represent their purpose. Even if it’s something small as adding in vowels where there were none before. By doing this, it can give us a focus on what an object is attempting to do before we think about adding new code.\nA simple example would be this function.\nfunc resetUserCredNLogout() Sure, it kinda makes sense and the behaviour can be inferred. However, by avoiding shorthand it becomes easier to read at a glance and process what this function is meant to do.\nfunc resetUserCredentialsAndLogout() This may be counterintuitive, but in practise it is much quicker to digest.\nb. Typos In a similar vein, it’s a good practise to correct any typo’s you may find in the code you’re working with.\nvar custmeorCarePhoneNumber: String Small improvements such as this can appear to be insignificant or a poor use of time, but the goal here with these small improvements is to remove as many obstructions as possible when reading the code.\nDependency Injection The majority of structures and classes within a project will have some form of dependency. It could be a networking manager that makes api requests and parses json, or it could be a data storage object that persists data to the file store or to the cloud.\nIn our project, we have seen places where a single object can contain many dependencies. The issue with this is, when they are instantiated internally to the object, it can make refactoring the behaviour of that objects more difficult when we have to work around these statically defined behaviours.\nFor example, we could have an object that stores data called “JsonDataStore”. This class only stores JSON, nothing else. In use, it could look like this:\nfinal class ViewModel { func receivedData(data: Data) { JSONDataStore().store(jsonData: data) } } This would be applicable for as long as we want to store JSON. But what if the requirement was to instead start saving data into a database? Or what if we wanted to reuse our ViewModel in multiple places, but with different storage mechanisms?\nIf we instead rewrite this dependency so that it is exposed at initialisation, we can see explicitly and early what this object requires to work.\nfinal class ViewModel { let dataStore: JSONDataStore init(withDataStore dataStore: JSONDataStore) { self.dataStore = dataStore } func receivedData(data: Data) { self.dataStore.store(jsonData: data) } } Similar to renaming properties or objects, highlighting early the dependencies of an object give software engineers the ability to understand at a glance the requirements and work with them when developing new functionality.\nWe adopt this principle throughout our refactoring, when working with legacy code and spot an object being instantiated internally, we pull it to the surface where it can be defined as early as possible.\nOne of the biggest benefits of Dependency Injection is our ability to unit test these objects. By writing unit tests we can better understand the current functionality, document our new requirements and see how application of those requirements could affect legacy behaviour, all without having to run the full application.\nThe broader the suite of unit tests, the more easily we are able to refactor code and validate that there are no functional regressions. The last thing we want to do is break something when refactoring.\nWrite Unit Tests Whilst we are on the topic.\nIt can be tempting to bypass this step when you’re knee deep in code and in an effort to make it better are tugging at disparate threads of logic. More so if the area being refactored is a large object, with changes having a “domino effect” on other objects within the project.\nBut this step may be regarded as one of the most important. As mentioned earlier, the act of writing unit tests encourages us to expose dependencies, document how this object works and give us confidence that this object satisfies its intended purpose.\nMy personal view is one that doesn’t advocate for 100% test coverage for all objects. There is a balance and judgement required to write tests to cover the code enough.\nWhilst refactoring, we are aiming to improve in a stepped, progressive manner whilst adding new functionality. The principle we have adopted in our team is that whilst we are working on the codebase, we are iteratively improving the code a piece at a time - adding a few tests here, exposing a dependency there, so that as we move forward we can bring the project health up with us.\nProtocol Conformance The brother of dependency injection is Protocol Conformance.\nIn our project, there are a fair number of singletons used, with a fair number of different functions.\nTo unit test with singletons can be difficult.\nOne technique to “cheat” is to define a protocol to which the singletons conform. This gives us the ability to use dependency injection with protocols instead of concrete instances, making it easier to unit test code which relies on singletons.\nIf we use the JSONDataStore example from earlier, it could look something such as this.\nfinal class ViewModel { func receivedData(data: Data) { JSONDataStore.shared.store(jsonData: data) } } Trying to write a unit test that covers this function is difficult, because it will always call the singleton, which could have unintended consequences on the rest of the app’s state. At it’s worst, singletons could cause API requests to be made across the network, introducing a point of failure and potentially affecting the run-time of the test suite.\nA protocol in iOS development is a contract that a conforming object agrees to implement. A protocol can define both functions and properties and allows us to decouple an objects functionality from a specific implementation or concrete instance. It is useful in a unit testing context, where you can replace those concrete implementations with mocked versions that allow us to force the tested object into many different scenarios.\nTo refactor our datastore to use protocols, we would first create a protocol that covers the existing functionality. It’s important to remember that we’re not looking to change too much here, we want to maintain functionality but extend the flexibility.\nprotocol DataStoreProtocol { func store(data: Data) - Bool } In the spirit of the first point in this article, I’ve renamed the function to store(data: Data) since that is generic enough to cover all sorts of storage types.\nNow we have the protocol, we can make our shared instance conform\nfinal class JSONDataStore: DataStoreProtocol { static let shared = JSONDataStore() private init() { } func store(data: Data) - Bool { // store the data return true } } And lastly, we update our dependency injection to refer to the new protocol instead of the concrete instance.\nfinal class ViewModel { let dataStore: DataStoreProtocol init(dataStore: DataStoreProtocol = JSONDataStore.shared){ self.dataStore = dataStore } func receivedData(data: Data) { dataStore.store(data: data) } } As I mentioned earlier, we want to reduce the impact of any refactoring by avoiding changing too many files at one time - or in one Pull Request.\nTo help with this, we give the initialiser a default value, whereby if one is not given at instantiation, it will use the value provided. In this example, we assign the shared instance and this ensures that we maintain compatibility with existing callers of this class.\nWe have now made a class which was untestable more adaptable and open to augmentation through dependency injection and protocol conformance.\nBut wait…there’s more.\nSingletons have their use and do have instances where they are preferred over other architectural patterns. However they are commonly abused, lead to memory leaks, suffer from race conditions and become dumping grounds for disparate functionality.\nOn our particular project, we are reducing the number and scope of singletons being used in order to have an architecture with more defined dependencies and to have greater control over memory usage.\nBy using the techniques above, it has put us in a better position to refactor away from shared instances in the future. And by exposing shared instances we are able to migrate from them on a feature-by-feature basis, whilst keeping the functionality of the project intact.\nWrite New Code The final technique we employ whilst refactoring is the haymaker, the shot to the guts that puts legacy code on its heels.\nWhen working on an area with either a lot of legacy code or high complexity - either in code structure or functional requirements - it can be easier to write new components in a cleaner way and remove the legacy files from the project.\nThere are many benefits to writing new objects. We can make our view code smaller and specific to presentation logic. By having code moved to a ViewModel, we can write an objects interface that describes it’s functionality through good naming convention, initialise it with protocol conformance and make it testable from the beginning.\nWriting new code using dependency injection, protocol conformance and default initialisers means that we can isolate older code and replace functionality with new. As the scope of a legacy dependency becomes less and less, we are then in a position to remove that dependency altogether and the project will continue to function, without requiring a large amount of effort.\nFor example, if we were to have a data store (a unique example, I know) that persists into CoreData. We may find that having the overhead of CoreData is unnecessary and wish to use in-memory storage or file system caching. By using Builder or Factory patterns, we can continue to have the existing functionality exist but provide a mechanism to use the updated code when we choose.\nfunc viewModelBuilder(storeType: StoreType) - ViewModel { switch storeType { case .legacy: return ViewModel() case .modern: return ViewModel(dataStore: InMemoryDataStore()) } } By utilising these techniques, we can pick and choose areas that have the least impact to replace the data store with a InMemoryDataStore, leaving more complex areas until a later date. But the app will continue to function as before under the surface, buying us time to plan when to remove the unused references from the project.\nWrap Up Unless you are incredibly lucky or astute with your career decisions, you will rarely be working on a fresh codebase without code that can be improved upon. And even having worked on a new project for a significant amount of time, you will inevitably have code that no longer meets requirements or you have learned new ways to write the same thing in fewer lines.\nBy adopting principles of small improvements, rewriting early and having relevant unit-test coverage, you can go some way to ensuring that your project can remain healthy for as long as possible.\nIf you are coming into a project with a legacy codebase, then you can use these same ideas to improve the code. Even taking a small step such as renaming or fixing a typo can be the catalyst to further and more significant refactoring improvements.\n",
+  "wordCount" : "2127",
+  "inLanguage": "en",
+  "datePublished": "2021-05-01T12:00:00Z",
+  "dateModified": "2021-05-01T12:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://michaelsprindzuikate.github.io/posts/refactoring-into-the-equation/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "michael s.",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://michaelsprindzuikate.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+
+
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+<noscript>
+    <style type="text/css">
+        .theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://michaelsprindzuikate.github.io" accesskey="h" title="michael s. (Alt + H)">michael s.</a>
+            <span class="logo-switches">
+                <span class="theme-toggle" title="(Alt + T)">
+                    <a id="theme-toggle" accesskey="t">
+                        <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </a>
+                </span>
+                
+            </span>
+        </div>
+        <ul class="menu" id="menu" onscroll="menu_on_scroll()"></ul>
+    </nav>
+</header>
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">
+      Refactoring
+    </h1>
+    <div class="post-description">
+      Death by a Thousand Cuts
+    </div>
+    <div class="post-meta">May 1, 2021&nbsp;·&nbsp;10 min
+
+    </div>
+  </header> 
+
+  <div class="post-content">
+<p>
+  <figure>
+    <img src="/images/refactoring-into-the-equation/wood-plane.jpg#center" alt="A wood plane with shavings in and around it. Credit: https://www.flickr.com/photos/73228447@N02/15225483531">
+    <div class="caption">Just a little off the top, please</div>
+  </figure>
+</p>
+<p>Over the past year, alongside our regular app releases, my team and I have been working on a new version of our app which features, amongst other things, an improved user experience to make it easier to navigate and more responsive for users.</p>
+<p>Now, this is a project with&hellip;let&rsquo;s call it <em>&ldquo;heritage&rdquo;</em>. The origins date back to 2016, written in a fresh new language, Swift and with that comes the elephant in the room.. <em>legacy code</em>.
+Legacy code doesn&rsquo;t equate to bad code, sometimes far from it. However, one thing that legacy code is a synonym for is &ldquo;old requirements&rdquo;.</p>
+<p>The requirements that the original implementation satisfied, over time will normally be updated, extended, overruled or even forgotten. Unless a team are actively engaged in continuous refinement and improvement of the project health, the problem of legacy code is less about the number of lines written in a particular class or function. The problem is about how that code conveys it&rsquo;s <em>intent</em>.</p>
+<p>A developer coming into the project without the benefit of being the author of that original code might find it difficult to infer the intent of what is before them if it has been augmented over time with layers of conditional logic or unique, arbitrary behaviour.</p>
+<p>There are a lot of books and blog posts on the topic of working with legacy code and they cover far more detail than I can here. What I would like to do is highlight the four main techniques we use while refactoring our product to keep it as manageable as possible.</p>
+<p>In no particular order or preference, I give you..</p>
+<h2 id="naming">Naming<a hidden class="anchor" aria-hidden="true" href="#naming">#</a></h2>
+<p>Other than the titles of technology-based blog posts; variables, functions and structures are the hardest thing to name correctly.</p>
+<p>When looking at adapting an existing object, it can be useful to rename properties or function names to better represent their purpose. Even if it&rsquo;s something small as adding in vowels where there were none before.
+By doing this, it can give us a focus on what an object is attempting to do before we think about adding new code.</p>
+<p>A simple example would be this function.</p>
+<pre><code>func resetUserCredNLogout()
+</code></pre><p>Sure, it <em>kinda</em> makes sense and the behaviour can be inferred.
+However, by avoiding shorthand it becomes easier to read at a glance and process what this function is meant to do.</p>
+<pre><code>func resetUserCredentialsAndLogout()
+</code></pre><p>This may be counterintuitive, but in practise it is much quicker to digest.</p>
+<h3 id="b-typos">b. Typos<a hidden class="anchor" aria-hidden="true" href="#b-typos">#</a></h3>
+<p>In a similar vein, it&rsquo;s a good practise to correct any typo&rsquo;s you may find in the code you&rsquo;re working with.</p>
+<pre><code>var custmeorCarePhoneNumber: String
+</code></pre><p>Small improvements such as this can appear to be insignificant or a poor use of time, but the goal here with these small improvements is to remove as many obstructions as possible when reading the code.</p>
+<h2 id="dependency-injection">Dependency Injection<a hidden class="anchor" aria-hidden="true" href="#dependency-injection">#</a></h2>
+<p>The majority of structures and classes within a project will have some form of dependency. It could be a networking manager that makes api requests and parses json, or it could be a data storage object that persists data to the file store or to the cloud.</p>
+<p>In our project, we have seen places where a single object can contain <strong>many</strong> dependencies. The issue with this is, when they are instantiated internally to the object, it can make refactoring the behaviour of that objects more difficult when we have to work around these statically defined behaviours.</p>
+<p>For example, we could have an object that stores data called &ldquo;JsonDataStore&rdquo;. This class <em>only</em> stores JSON, nothing else. In use, it could look like this:</p>
+<pre><code>final class ViewModel {
+
+    func receivedData(data: Data) {
+        JSONDataStore().store(jsonData: data)
+    }
+}
+</code></pre><p>This would be applicable for as long as we want to store JSON. But what if the requirement was to instead start saving data into a database? Or what if we wanted to reuse our ViewModel in multiple places, but with different storage mechanisms?</p>
+<p>If we instead rewrite this dependency so that it is exposed at initialisation, we can see explicitly and early what this object requires to work.</p>
+<pre><code>final class ViewModel {
+    let dataStore: JSONDataStore
+    init(withDataStore dataStore: JSONDataStore) {
+        self.dataStore = dataStore
+    }
+
+    func receivedData(data: Data) {
+        self.dataStore.store(jsonData: data)
+    }
+}
+</code></pre><p>Similar to renaming properties or objects, highlighting early the dependencies of an object give software engineers the ability to understand at a glance the requirements and work with them when developing new functionality.</p>
+<p>We adopt this principle throughout our refactoring, when working with legacy code and spot an object being instantiated internally, we pull it to the surface where it can be defined as early as possible.</p>
+<p>One of the biggest benefits of Dependency Injection is our ability to unit test these objects. By writing unit tests we can better understand the current functionality, document our new requirements and see how application of those requirements could affect legacy behaviour, all without having to run the full application.</p>
+<p>The broader the suite of unit tests, the more easily we are able to refactor code and validate that there are no functional regressions. The last thing we want to do is break something when refactoring.</p>
+<h2 id="write-unit-tests">Write Unit Tests<a hidden class="anchor" aria-hidden="true" href="#write-unit-tests">#</a></h2>
+<p>Whilst we are on the topic.</p>
+<p>It can be tempting to bypass this step when you&rsquo;re knee deep in code and in an effort to make it better are tugging at disparate threads of logic. More so if the area being refactored is a large object, with changes having a &ldquo;domino effect&rdquo; on other objects within the project.</p>
+<p>But this step may be regarded as one of the most important. As mentioned earlier, the act of writing unit tests encourages us to expose dependencies, document how this object works and give us confidence that this object satisfies its intended purpose.</p>
+<p>My personal view is one that doesn&rsquo;t advocate for 100% test coverage for all objects. There is a balance and judgement required to write  tests to cover the code <em>enough</em>.<br>
+Whilst refactoring, we are aiming to improve in a stepped, progressive manner whilst adding new functionality.
+The principle we have adopted in our team is that whilst we are working on the codebase, we are iteratively improving the code a piece at a time - adding a few tests here, exposing a dependency there, so that as we move forward we can bring the project health up with us.</p>
+<h2 id="protocol-conformance">Protocol Conformance<a hidden class="anchor" aria-hidden="true" href="#protocol-conformance">#</a></h2>
+<p>The brother of dependency injection is Protocol Conformance.</p>
+<p>In our project, there are a fair number of singletons used, with a fair number of different functions.</p>
+<p>To unit test with singletons can be difficult.<br>
+One technique to &ldquo;cheat&rdquo; is to define a protocol to which the singletons conform. This gives us the ability to use dependency injection with protocols instead of concrete instances, making it easier to unit test code which relies on singletons.</p>
+<p>If we use the JSONDataStore example from earlier, it could look something such as this.</p>
+<pre><code>final class ViewModel {
+    func receivedData(data: Data) {
+        JSONDataStore.shared.store(jsonData: data)
+    }
+}
+</code></pre><p>Trying to write a unit test that covers this function is difficult, because it will always call the singleton, which could have unintended consequences on the rest of the app&rsquo;s state. At it&rsquo;s worst, singletons could cause API requests to be made across the network, introducing a point of failure and potentially affecting the run-time of the test suite.</p>
+<p>A protocol in iOS development is a contract that a conforming object agrees to implement. A protocol can define both functions and properties and allows us to decouple an objects functionality from a specific implementation or concrete instance. It is useful in a unit testing context, where you can replace those concrete implementations with mocked versions that allow us to force the tested object into many different scenarios.</p>
+<p>To refactor our datastore to use protocols, we would first create a protocol that covers the existing functionality. It&rsquo;s important to remember that we&rsquo;re not looking to change <em>too much</em> here, we want to maintain functionality but extend the flexibility.</p>
+<pre><code>protocol DataStoreProtocol {
+    func store(data: Data) -&gt; Bool
+}
+</code></pre><p>In the spirit of the first point in this article, I&rsquo;ve renamed the function to <code>store(data: Data)</code> since that is generic enough to cover all sorts of storage types.</p>
+<p>Now we have the protocol, we can make our shared instance conform</p>
+<pre><code>final class JSONDataStore: DataStoreProtocol {
+    static let shared = JSONDataStore()
+    private init() { }
+    func store(data: Data) -&gt; Bool {
+        // store the data
+        return true
+    }
+}
+</code></pre><p>And lastly, we update our dependency injection to refer to the new protocol instead of the concrete instance.</p>
+<pre><code>final class ViewModel {
+    let dataStore: DataStoreProtocol
+    init(dataStore: DataStoreProtocol = JSONDataStore.shared){
+        self.dataStore = dataStore
+    }
+
+    func receivedData(data: Data) {
+        dataStore.store(data: data)
+    }
+}
+</code></pre><p>As I mentioned earlier, we want to reduce the impact of any refactoring by avoiding changing too many files at one time - or in one Pull Request.<br>
+To help with this, we give the initialiser a default value, whereby if one is not given at instantiation, it will use the value provided.
+In this example, we assign the shared instance and this ensures that we maintain compatibility with existing callers of this class.</p>
+<p>We have now made a class which was untestable more adaptable and open to augmentation through dependency injection and protocol conformance.</p>
+<p>But wait&hellip;<em>there&rsquo;s more</em>.</p>
+<p>Singletons have their use and do have instances where they are preferred over other architectural patterns. However they are commonly abused, lead to memory leaks, suffer from race conditions and become dumping grounds for disparate functionality.</p>
+<p>On our particular project, we are reducing the number and scope of singletons being used in order to have an architecture with more defined dependencies and to have greater control over memory usage.</p>
+<p>By using the techniques above, it has put us in a better position to refactor away from shared instances in the future. And by exposing shared instances we are able to migrate from them on a feature-by-feature basis, whilst keeping the functionality of the project intact.</p>
+<h2 id="write-new-code">Write New Code<a hidden class="anchor" aria-hidden="true" href="#write-new-code">#</a></h2>
+<p>The final technique we employ whilst refactoring is the haymaker, the shot to the guts that puts legacy code on its heels.</p>
+<p>When working on an area with either a lot of legacy code or high complexity - either in code structure or functional requirements - it can be easier to write new components in a cleaner way and remove the legacy files from the project.</p>
+<p>There are many benefits to writing new objects. We can make our view code smaller and specific to presentation logic.
+By having code moved to a ViewModel, we can write an objects interface that describes it&rsquo;s functionality through good naming convention, initialise it with protocol conformance and make it testable from the beginning.</p>
+<p>Writing new code using dependency injection, protocol conformance and default initialisers means that we can isolate older code and replace functionality with new. As the scope of a legacy dependency becomes less and less, we are then in a position to remove that dependency altogether and the project will continue to function, without requiring a large amount of effort.</p>
+<p>For example, if we were to have a data store (a unique example, I know) that persists into CoreData. We may find that having the overhead of CoreData is unnecessary and wish to use in-memory storage or file system caching. By using Builder or Factory patterns, we can continue to have the existing functionality exist but provide a mechanism to use the updated code when we choose.</p>
+<pre><code>func viewModelBuilder(storeType: StoreType) -&gt; ViewModel {
+    switch storeType {
+        case .legacy:
+            return ViewModel()
+        case .modern:
+            return ViewModel(dataStore: InMemoryDataStore())
+    }
+}
+</code></pre><p>By utilising these techniques, we can pick and choose areas that have the least impact to replace the data store with a InMemoryDataStore, leaving more complex areas until a later date. But the app will continue to function as before under the surface, buying us time to plan when to remove the unused references from the project.</p>
+<h1 id="wrap-up">Wrap Up<a hidden class="anchor" aria-hidden="true" href="#wrap-up">#</a></h1>
+<p>Unless you are incredibly lucky or astute with your career decisions, you will rarely be working on a fresh codebase without code that can be improved upon. And even having worked on a new project for a significant amount of time, you will inevitably have code that no longer meets requirements or you have learned new ways to write the same thing in fewer lines.</p>
+<p>By adopting principles of small improvements, rewriting early and having relevant unit-test coverage, you can go some way to ensuring that your project can remain healthy for as long as possible.</p>
+<p>If you are coming into a project with a legacy codebase, then you can use these same ideas to improve the code. Even taking a small step such as renaming or fixing a typo can be the catalyst to further and more significant refactoring improvements.</p>
+
+</div>
+  <footer class="post-footer">
+  </footer>
+</article>
+    </main><footer class="footer">
+    <span>&copy; 2021 <a href="https://michaelsprindzuikate.github.io">michael s.</a></span>
+    <span>&middot;</span>
+    <span>Powered by <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a></span>
+    <span>&middot;</span>
+    <span>Theme <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a></span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)">
+    <button class="top-link" id="top-link" type="button" accesskey="g">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+            <path d="M12 6H0l6-6z" />
+        </svg>
+    </button>
+</a>
+
+
+
+<script defer src="/assets/js/highlight.min.216f8553b250c2e56350bfb871fa3afd.js" integrity="md5-IW&#43;FU7JQwuVjUL&#43;4cfo6/Q=="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<script>
+    window.onload = function () {
+        if (localStorage.getItem("menu-scroll-position")) {
+            document.getElementById('menu').scrollLeft = localStorage.getItem("menu-scroll-position");
+        }
+    }
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+    function menu_on_scroll() {
+        localStorage.setItem("menu-scroll-position", document.getElementById('menu').scrollLeft);
+    }
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+
+</body>
+
+</html>
