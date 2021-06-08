@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>KeyPath to Enlightenment | michael s.</title>
+
+<meta name="keywords" content="" />
+<meta name="description" content="Peekaboo, I see you">
+<meta name="author" content="">
+<link rel="canonical" href="https://michaelsprindzuikate.github.io/posts/keypath-to-enlightenment/" />
+<link href="/assets/css/stylesheet.min.2e1fbb977451e874d76d824bd1c7ed2a.css" integrity="md5-Lh&#43;7l3RR6HTXbYJL0cftKg==" rel="preload stylesheet"
+    as="style">
+
+<link rel="icon" href="https://michaelsprindzuikate.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://michaelsprindzuikate.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://michaelsprindzuikate.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://michaelsprindzuikate.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://michaelsprindzuikate.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.81.0" />
+
+
+<meta property="og:title" content="KeyPath to Enlightenment" />
+<meta property="og:description" content="Peekaboo, I see you" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://michaelsprindzuikate.github.io/posts/keypath-to-enlightenment/" />
+<meta property="article:published_time" content="2021-06-01T12:00:00+00:00" />
+<meta property="article:modified_time" content="2021-06-01T12:00:00+00:00" /><meta property="og:site_name" content="michael s." />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="KeyPath to Enlightenment"/>
+<meta name="twitter:description" content="Peekaboo, I see you"/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "KeyPath to Enlightenment",
+  "name": "KeyPath to Enlightenment",
+  "description": "This is a story of a promise made.\nWhen planning a piece of work, the last thing I want to do is set an expectation that I can\u0026amp;rsquo;t match. By now, I figure I should know iOS, …",
+  "keywords": [
+    
+  ],
+  "articleBody": "This is a story of a promise made.\nWhen planning a piece of work, the last thing I want to do is set an expectation that I can’t match. By now, I figure I should know iOS, UIKit, Foundation, all of it inside out. I have been doing this for a while now, you know, I should be an authority.\nWhen I say “Sure, we can add subviews to a UITabBarItem”, I mean it.\nExcept.\nHaving a read of this page https://developer.apple.com/documentation/uikit/uitabbaritem, it’s pretty obvious that you can’t.\nYou can set two images for a selected and deselected state. You can set a badge colour and badge number. You can even set the text styling for the badge.\nBut that’s it.\nI had two options after reading the documentation; I could update my task description to work with the available functionality of the UITabBarItem class, or I could go on a voyage of discovery - plotting my way through uncharted seas, documenting the many stimuli and experiences that I encountered on the way.\nIt’s not even an option, is it?\n False Dawns I was stuffed. I had my plan of what I wanted to do - sub-class UITabBarItem, initialiser that accepts a couple of Lottie animation files, add them as a subview and switch between the two when the selected state changes - simple!\nfinal class AnimatedTabBarItem: UITabBarItem { private let animationName: String private let selectedAnimationName: String init(animationName: String, selectedAnimationName: String, image: UIImage, selectedImage: UIImage, title: String?) { self.animationName = animationName self.selectedAnimationName = selectedAnimationName super.init() self.image = image self.selectedImage = selectedImage self.title = title } func animate() { //add Lottie animation here } } I had a good start, this was looking positive. I could instantiate my tab bar item and when needed, would call an animate() function to start the animation going.\n Breaking Point And here I hit trouble. To add the animated views to the button, I needed a view to add them to. But there are none exposed. There are views there, there must be, because I can see them.\n  Look, see...it's right there!  Not one to doubt my own eyes, I started to think. I did what I normally do in situations like this, where I’m confused, frustrated and overly curious. I put a breakpoint inside my animate function and tried to see what the hell was going on.\nWhen stopping at a breakpoint, the debugger presents two windows. The right pane gives the console where you can enter commands to inspect and interact with the program. The left pane shows the variables and objects relevant at this time.\n  This looks **dangerous**  The variables pane here shows my TabBarItem (self) at the top. And by clicking the arrow, it expands that TabBarItem’s properties to show us details that aren’t available through the class definition in the UIKit header.\nNow to go digging.\nArgh-cheology Opening the properties, I saw something with potential. A _view item with a value of UITabBarButton. What’s a UITabBarButton? There’s no Apple Documentation available (And I use Dash, if it’s isn’t there, then it isn’t there.)\nWhat am I looking at?\nA UITabBarButton is an internal UIKit object, one of the building blocks of how the UITabBarItem is put together. I needed a way to be able to investigate whether I could use this in my code as a reference point for adding my animated view.\nTo do this, I would use KeyPaths.\nA KeyPath is a way of referencing a property on an object instead of referencing the value of that property. For example\nstruct Album { let artist: String let title: String let songs: [Song] } let album = Album(artist: \"Grizzly Bear\", title: \"Shields\", songs: []) let albumTitleValue = album.title // albumTitleValue is a string let albumTitleKeyPath = album(keyPath: [\\Album.title]) // albumTitleKeyPath is a KeyPath object of KeyPathYou might notice that the syntax in swift uses defined properties. As in, I have to have access to the properties I wish to use as key path’s - one of the benefits of Type Safety.\nIt’s not much use to me though, since I don’t have direct access to the property I want. How can I use a KeyPath to get a property if I don’t have access to the property I’m trying to use a KeyPath to get?\nBut all is not lost. There is a function available on classes that are compliant with the NSKeyValueCoding protocol (of which UITabBarItem is) that I can use instead. And even better, it uses one of the wonders of Cocoa/Objective-C under the hood - the fact that any object that conforms to NSKeyValueCoding will have it’s properties accessible (and traversable) by string.\nWhile on the breakpoint, I moved over to the debugger and typed out a single line.\n(lldb) po self.value(forKey: \"view\")\nAnd got back a result\n- some : \nI’d struck gold.\nI had a way to finally get access to a view on this item! All I had left was to add my animation view as a subview, start it animating and I could go back to my JIRA board with confidence, proudly moving my ticket to Code Review column.\nExcept …\n Natural Selection Selected state. How do I keep track of the selected state? I didn’t want to expose anything outside of the TabBarItem to force the change of state - for example, no extension to my animate function like animate(isSelected: Bool). I wanted this object to behave like it’s parent class, handling the switch between modes itself.\nTo do this, I could leverage Key-Value Observers.\nKey-Value Observing (or KVO) is a way to register to be notified of any changes to a defined property. For example, we could register an observer onto a volumeLevel property to update a UI element. The keyPath in this instance is\nclass AudioEngine: NSObject { @objc dynamic var volumeLevel: Int = 0 override init() { super.init() addObserver(self, forKeyPath: \"volumeLevel\", options: .new, context: nil) } override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) { if keyPath == \"volumeLevel\" { volumeChanged() } } func volumeChanged() { // Update UI with the value of volumeLevel property print(\"new volume: \\(volumeLevel)\") } } In this example, I’m telling the observer to be notified when it receives new values to the property and then do some other work, in this case to print the updated volume to the console.\nIn the modern Swift world, KVO is used less, favouring willSet{}, didSet{} callbacks on properties. The same behaviour can be replicated in this manner.\n var volumeLevel: Int = 0 { didSet { print(\"volume: \\(volumeLevel)\") } } Going back into “Detective Mode”, and experimenting in the debugger, I saw that I could call po self.value(forKey: \"_view._selected\") which would return the correct state of the button. I figured I could use KVO on this keyPath and be done.\nNo such luck! Creating that observer didn’t return any reaction to changes. Why?\n From looking at the documentation on KVO implementation, I noticed that when wanting to use KVO in our own objects, it was necessary to add the @objc dynamic keywords as a prefix to any properties. This is an assumption, but it could be that the underlying (not publically accessible) property within UITabBarItem doesn’t have this designation and therefore it can be accessed via value(forKey:) but not observable.\n I had to get my pickaxe out again.\nThrough a long and arduous process of trial and error, looking at the object debugger, typing value(forKey:) with different values to see what was both available and available to be used with KVO, I landed upon a usable solution:\nview.tabBar.selectedItem\nInspecting properties of the TabBarItem itself yielded no usable options, but I was able to reference the parent TabBar for the item and infer the selectedItem of the whole TabBar.\n Observe and Report I could now respond to the changes of state of the TabBar by adding the observer in the init() of my custom TabBarItem.\nIn my responding function, I would be able to call my animate() function to add the right Lottie view to the item for the current selected state. I could use once more the value(forKey:\"_view._selected) function to get the value.\nAll that was left to do was to clean up my observers - making sure they were removed on deinit - and ensure that my Lottie animation view was only ever present once in the view hierarchy. The last thing I wanted was to be adding new UIViews each time the tab bar state changed.\nWith this done, I had a subclassed UITabBarItem which could be animated successfully.\nfinal class AnimatedTabBarItem: UITabBarItem { private let animationName: String private let selectedAnimationName: String init(animationName: String, selectedAnimationName: String, image: UIImage, selectedImage: UIImage, title: String?) { self.animationName = animationName self.selectedAnimationName = selectedAnimationName super.init() self.image = image self.selectedImage = selectedImage self.title = title addObserver(self, forKeyPath: \"view.tabBar.selectedItem\", options: .new, context: nil) } func animate() { if let parentView = self.value(forKey: \"view\") as? UIView { let selectedState = self.value(forKeyPath: \"_view._selected\") // 1. Create Lottie animation with correct file for selected state // 2. Create Lottie animation view to contain the animation // 3. Add animation view as a subview to parentView } } override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) { if keyPath == \"view.tabBar.selectedItem\" { animate() } } } Wrap Up We sometimes forget that Swift is built on top of, and alongside, incredibly powerful features of the Objective-C language. Although it can be dangerous, being able to leverage inspection and access of objects in our projects in an “indirect” direct way can offer great results and unique experiences. On the odd occasion, it can be useful to look back over our old Objective-C books and reference guides to appreciate how flexible a language it can be.\nWe do have to exercise caution, by not having direct access to some of these hidden attributes, we need to make sure we are defensive in how we apply these techniques in case future iOS updates mean that this approach no longer works.\nI also recognise that I can’t know everything ahead of time, but am always discovering new ways of doing things and new features of the platform.\nAnd now that I know what a UITabBarItem can and cannot do, next time I’ll recommend to my team that we take an alternative approach….\n",
+  "wordCount" : "1741",
+  "inLanguage": "en",
+  "datePublished": "2021-06-01T12:00:00Z",
+  "dateModified": "2021-06-01T12:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://michaelsprindzuikate.github.io/posts/keypath-to-enlightenment/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "michael s.",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://michaelsprindzuikate.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+
+
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+<noscript>
+    <style type="text/css">
+        .theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://michaelsprindzuikate.github.io" accesskey="h" title="michael s. (Alt + H)">michael s.</a>
+            <span class="logo-switches">
+                <span class="theme-toggle" title="(Alt + T)">
+                    <a id="theme-toggle" accesskey="t">
+                        <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </a>
+                </span>
+                
+            </span>
+        </div>
+        <ul class="menu" id="menu" onscroll="menu_on_scroll()"></ul>
+    </nav>
+</header>
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">
+      KeyPath to Enlightenment
+    </h1>
+    <div class="post-description">
+      Peekaboo, I see you
+    </div>
+    <div class="post-meta">June 1, 2021&nbsp;·&nbsp;9 min
+
+    </div>
+  </header> 
+
+  <div class="post-content">
+<p>This is a story of a promise made.</p>
+<p>When planning a piece of work, the last thing I want to do is set an expectation that I can&rsquo;t match. By now, I figure I should know iOS, UIKit, Foundation, <em>all of it</em> inside out. I have been doing this for a while now, you know, I should be an <strong>authority</strong>.</p>
+<p>When I say &ldquo;Sure, we can add subviews to a UITabBarItem&rdquo;, I mean it.</p>
+<p>Except.</p>
+<p>Having a read of this page <a href="https://developer.apple.com/documentation/uikit/uitabbaritem">https://developer.apple.com/documentation/uikit/uitabbaritem</a>, it&rsquo;s pretty obvious that you can&rsquo;t.</p>
+<p>You can set <strong>two</strong> images for a selected and deselected state. You can set a badge colour and badge number. You can even set the text styling for the badge.</p>
+<p>But that&rsquo;s it.</p>
+<p>I had two options after reading the documentation; I could update my task description to work with the available functionality of the UITabBarItem class, or I could go on a voyage of discovery - plotting my way through uncharted seas, documenting the many stimuli and experiences that I encountered on the way.</p>
+<p>It&rsquo;s not even an option, is it?</p>
+<hr>
+<h1 id="false-dawns">False Dawns<a hidden class="anchor" aria-hidden="true" href="#false-dawns">#</a></h1>
+<p>I was stuffed.
+I had my plan of what I wanted to do - sub-class UITabBarItem, initialiser that accepts a couple of <a href="https://github.com/airbnb/lottie-ios">Lottie</a> animation files, add them as a subview and switch between the two when the selected state changes - simple!</p>
+<pre><code>final class AnimatedTabBarItem: UITabBarItem {
+    
+    private let animationName: String
+    private let selectedAnimationName: String
+    
+    init(animationName: String,
+         selectedAnimationName: String,
+         image: UIImage,
+         selectedImage: UIImage,
+         title: String?) {
+        
+        self.animationName = animationName
+        self.selectedAnimationName = selectedAnimationName
+        
+        super.init()
+        
+        self.image = image
+        self.selectedImage = selectedImage
+        self.title = title
+    }
+    
+	func animate() {
+		//add Lottie animation here
+	}
+}
+</code></pre><p>I had a good start, this was looking positive. I could instantiate my tab bar item and when needed, would call an <code>animate()</code> function to start the animation going.</p>
+<hr>
+<h1 id="breaking-point">Breaking Point<a hidden class="anchor" aria-hidden="true" href="#breaking-point">#</a></h1>
+<p>And here I hit trouble.
+To add the animated views to the button, I needed <strong>a</strong> view to add them to. But there are none exposed.
+There <em>are</em> views there, there must be, because I can see them.</p>
+<p>
+  <figure>
+    <img src="/images/keypath-to-enlightenment/viewDebugger.png#center" alt="A view of the View debugger in Xcode">
+    <div class="caption">Look, see...it&#39;s right there!</div>
+  </figure>
+</p>
+<p>Not one to doubt my own eyes, I started to think.
+I did what I normally do in situations like this, where I&rsquo;m confused, frustrated and overly curious. I put a breakpoint inside my <code>animate</code> function and tried to see what the hell was going on.</p>
+<p>When stopping at a breakpoint, the debugger presents two windows. The right pane gives the console where you can enter commands to inspect and interact with the program. The left pane shows the variables and objects relevant at this time.</p>
+<p>
+  <figure>
+    <img src="/images/keypath-to-enlightenment/object%20debugger.png#center" alt="A picture of the object debugger in Xcode">
+    <div class="caption">This looks **dangerous**</div>
+  </figure>
+</p>
+<p>The variables pane here shows my TabBarItem (<strong>self</strong>) at the top. And by clicking the arrow, it expands that TabBarItem&rsquo;s properties to show us details that aren&rsquo;t available through the class definition in the UIKit header.</p>
+<p>Now to go digging.</p>
+<h1 id="argh-cheology">Argh-cheology<a hidden class="anchor" aria-hidden="true" href="#argh-cheology">#</a></h1>
+<p>Opening the properties, I saw something with potential. A <code>_view</code> item with a value of <code>UITabBarButton</code>. What&rsquo;s a UITabBarButton? There&rsquo;s no Apple Documentation available (And I use <a href="https://kapeli.com/dash">Dash</a>, if it&rsquo;s isn&rsquo;t there, then <em>it isn&rsquo;t there</em>.)</p>
+<p>What am I looking at?</p>
+<p>A <code>UITabBarButton</code> is an internal UIKit object, one of the building blocks of how the UITabBarItem is put together. I needed a way to be able to investigate whether I could use this in my code as a reference point for adding my animated view.</p>
+<p>To do this, I would use KeyPaths.</p>
+<p>A KeyPath is a way of referencing a property on an object instead of referencing the <em>value</em> of that property.
+For example</p>
+<pre><code>struct Album {
+	let artist: String
+	let title: String
+	let songs: [Song]
+}
+
+let album = Album(artist: &quot;Grizzly Bear&quot;, title: &quot;Shields&quot;, songs: [])
+let albumTitleValue = album.title
+// albumTitleValue is a string
+let albumTitleKeyPath = album(keyPath: [\Album.title])
+// albumTitleKeyPath is a KeyPath object of KeyPath&lt;Album, String&gt;
+</code></pre><p>You might notice that the syntax in swift uses defined properties. As in, I have to have access to the properties I wish to use as key path&rsquo;s - one of the benefits of Type Safety.<br>
+It&rsquo;s not much use to me though, since I don&rsquo;t have direct access to the property I want. How can I use a KeyPath to get a property if I don&rsquo;t have access to the property I&rsquo;m trying to use a KeyPath to get?</p>
+<p>But all is not lost. There is a function available on classes that are compliant with the <code>NSKeyValueCoding</code> protocol (of which UITabBarItem <strong>is</strong>) that I can use instead.
+And even better, it uses one of the wonders of Cocoa/Objective-C under the hood - the fact that any object that conforms to <code>NSKeyValueCoding</code> will have it&rsquo;s properties accessible (and traversable) by <em>string</em>.</p>
+<p>While on the breakpoint, I moved over to the debugger and typed out a single line.</p>
+<p><code>(lldb) po self.value(forKey: &quot;view&quot;)</code></p>
+<p>And got back a result</p>
+<p><code>- some : &lt;UITabBarButton: 0x7fe2aecb9ad0; frame = (236 1; 74 48); opaque = NO; layer = &lt;CALayer: 0x7fe2affe0370&gt;&gt;</code></p>
+<p>I&rsquo;d struck gold.</p>
+<p>I had a way to finally get access to <strong>a</strong> view on this item! All I had left was to add my animation view as a subview, start it animating and I could go back to my JIRA board with confidence, proudly moving my ticket to Code Review column.</p>
+<p><em>Except &hellip;</em></p>
+<hr>
+<h1 id="natural-selection">Natural Selection<a hidden class="anchor" aria-hidden="true" href="#natural-selection">#</a></h1>
+<p>Selected state. How do I keep track of the selected state?
+I didn&rsquo;t want to expose anything outside of the TabBarItem to force the change of state - for example, no extension to my animate function like <code>animate(isSelected: Bool)</code>. I wanted this object to behave like it&rsquo;s parent class, handling the switch between modes itself.</p>
+<p>To do this, I could leverage <em>Key-Value Observers</em>.</p>
+<p>Key-Value Observing (or KVO) is a way to register to be notified of any changes to a defined property. For example, we could register an observer onto a <code>volumeLevel</code> property to update a UI element. The keyPath in this instance is</p>
+<pre><code>class AudioEngine: NSObject {
+
+    @objc dynamic var volumeLevel: Int = 0
+
+    override init() {
+        super.init()
+        addObserver(self,
+                    forKeyPath: &quot;volumeLevel&quot;,
+                    options: .new,
+                    context: nil)
+    }
+
+    override func observeValue(forKeyPath keyPath: String?, 
+        of object: Any?, change: [NSKeyValueChangeKey : Any]?, 
+        context: UnsafeMutableRawPointer?) {
+        if keyPath == &quot;volumeLevel&quot; {
+            volumeChanged()
+        }
+    }
+
+    func volumeChanged() {
+        // Update UI with the value of volumeLevel property
+        print(&quot;new volume: \(volumeLevel)&quot;)
+    }
+}
+</code></pre><p>In this example, I&rsquo;m telling the observer to be notified when it receives new values to the property and then do some other work, in this case to print the updated volume to the console.</p>
+<p>In the modern Swift world, KVO is used less, favouring <code>willSet{}</code>, <code>didSet{}</code> callbacks on properties. The same behaviour can be replicated in this manner.</p>
+<pre><code>    var volumeLevel: Int = 0 {
+        didSet {
+            print(&quot;volume: \(volumeLevel)&quot;)
+        }
+    }
+</code></pre><p>Going back into &ldquo;Detective Mode&rdquo;, and experimenting in the debugger, I saw that I could call <code>po self.value(forKey: &quot;_view._selected&quot;)</code> which would return the correct state of the button. I figured I could use KVO on this keyPath and be done.</p>
+<p>No such luck! Creating that observer didn&rsquo;t return any reaction to changes.
+Why?</p>
+<blockquote>
+<p>From looking at the documentation on KVO implementation, I noticed that when wanting to use KVO in our own objects, it was necessary to add the <code>@objc dynamic</code> keywords as a prefix to any properties.
+This is an assumption, but it could be that the underlying (not publically accessible) property within <code>UITabBarItem</code> doesn&rsquo;t have this designation and therefore it <strong>can</strong> be accessed via <code>value(forKey:)</code> but not observable.</p>
+</blockquote>
+<p>I had to get my pickaxe out again.</p>
+<p>Through a long and arduous process of trial and error, looking at the object debugger, typing <code>value(forKey:)</code> with different values to see what was both available <em>and</em> available to be used with KVO, I landed upon a usable solution:</p>
+<p><code>view.tabBar.selectedItem</code></p>
+<p>Inspecting properties of the TabBarItem itself yielded no usable options, but I was able to reference the parent TabBar for the item and infer the selectedItem of the <em>whole</em> TabBar.</p>
+<hr>
+<h1 id="observe-and-report">Observe and Report<a hidden class="anchor" aria-hidden="true" href="#observe-and-report">#</a></h1>
+<p>I could now respond to the changes of state of the TabBar by adding the observer in the <code>init()</code> of my custom TabBarItem.</p>
+<p>In my responding function, I would be able to call my <code>animate()</code> function to add the right Lottie view to the item for the current selected state. I could use once more the <code>value(forKey:&quot;_view._selected)</code> function to get the value.</p>
+<p>All that was left to do was to clean up my observers - making sure they were removed on deinit - and ensure that my Lottie animation view was only ever present once in the view hierarchy. The last thing I wanted was to be adding <em>new</em> UIViews each time the tab bar state changed.</p>
+<p>With this done, I had a subclassed UITabBarItem which could be animated successfully.</p>
+<pre><code>final class AnimatedTabBarItem: UITabBarItem {
+
+    private let animationName: String
+    private let selectedAnimationName: String
+
+    init(animationName: String,
+         selectedAnimationName: String,
+         image: UIImage,
+         selectedImage: UIImage,
+         title: String?) {
+
+        self.animationName = animationName
+        self.selectedAnimationName = selectedAnimationName
+
+        super.init()
+
+        self.image = image
+        self.selectedImage = selectedImage
+        self.title = title
+
+        addObserver(self, forKeyPath: &quot;view.tabBar.selectedItem&quot;,
+                    options: .new,
+                    context: nil)
+    }
+
+    func animate() {
+
+        if let parentView = self.value(forKey: &quot;view&quot;) as? UIView {
+
+            let selectedState = self.value(forKeyPath: &quot;_view._selected&quot;) 
+
+            // 1. Create Lottie animation with correct file for selected state
+            // 2. Create Lottie animation view to contain the animation
+            // 3. Add animation view as a subview to parentView
+        }
+    }
+
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+
+        if keyPath == &quot;view.tabBar.selectedItem&quot; {
+            animate()
+        }
+    }
+}
+</code></pre><h1 id="wrap-up">Wrap Up<a hidden class="anchor" aria-hidden="true" href="#wrap-up">#</a></h1>
+<p>We sometimes forget that Swift is built on top of, and alongside, incredibly powerful features of the Objective-C language. Although it can be dangerous, being able to leverage inspection and access of objects in our projects in an &ldquo;indirect&rdquo; direct way can offer great results and unique experiences. On the odd occasion, it can be useful to look back over our old Objective-C books and reference guides to appreciate how flexible a language it can be.</p>
+<p>We do have to exercise caution, by not having direct access to some of these hidden attributes, we need to make sure we are defensive in how we apply these techniques in case future iOS updates mean that this approach no longer works.</p>
+<p>I also recognise that I can&rsquo;t know everything ahead of time, but am always discovering new ways of doing things and new features of the platform.</p>
+<p>And now that I know what a UITabBarItem can and cannot do, next time I&rsquo;ll recommend to my team that we take an alternative approach&hellip;.</p>
+
+</div>
+  <footer class="post-footer">
+  </footer>
+</article>
+    </main><footer class="footer">
+    <span>&copy; 2021 <a href="https://michaelsprindzuikate.github.io">michael s.</a></span>
+    <span>&middot;</span>
+    <span>Powered by <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a></span>
+    <span>&middot;</span>
+    <span>Theme <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a></span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)">
+    <button class="top-link" id="top-link" type="button" accesskey="g">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+            <path d="M12 6H0l6-6z" />
+        </svg>
+    </button>
+</a>
+
+
+
+<script defer src="/assets/js/highlight.min.216f8553b250c2e56350bfb871fa3afd.js" integrity="md5-IW&#43;FU7JQwuVjUL&#43;4cfo6/Q=="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<script>
+    window.onload = function () {
+        if (localStorage.getItem("menu-scroll-position")) {
+            document.getElementById('menu').scrollLeft = localStorage.getItem("menu-scroll-position");
+        }
+    }
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+    function menu_on_scroll() {
+        localStorage.setItem("menu-scroll-position", document.getElementById('menu').scrollLeft);
+    }
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+
+</body>
+
+</html>
