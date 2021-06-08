@@ -148,7 +148,7 @@
 <p>I had two options after reading the documentation; I could update my task description to work with the available functionality of the UITabBarItem class, or I could go on a voyage of discovery - plotting my way through uncharted seas, documenting the many stimuli and experiences that I encountered on the way.</p>
 <p>It&rsquo;s not even an option, is it?</p>
 <hr>
-<h1 id="false-dawns">False Dawns<a hidden class="anchor" aria-hidden="true" href="#false-dawns">#</a></h1>
+<h2 id="false-dawns">False Dawns<a hidden class="anchor" aria-hidden="true" href="#false-dawns">#</a></h2>
 <p>I was stuffed.
 I had my plan of what I wanted to do - sub-class UITabBarItem, initialiser that accepts a couple of <a href="https://github.com/airbnb/lottie-ios">Lottie</a> animation files, add them as a subview and switch between the two when the selected state changes - simple!</p>
 <pre><code>final class AnimatedTabBarItem: UITabBarItem {
@@ -178,7 +178,7 @@ I had my plan of what I wanted to do - sub-class UITabBarItem, initialiser that 
 }
 </code></pre><p>I had a good start, this was looking positive. I could instantiate my tab bar item and when needed, would call an <code>animate()</code> function to start the animation going.</p>
 <hr>
-<h1 id="breaking-point">Breaking Point<a hidden class="anchor" aria-hidden="true" href="#breaking-point">#</a></h1>
+<h2 id="breaking-point">Breaking Point<a hidden class="anchor" aria-hidden="true" href="#breaking-point">#</a></h2>
 <p>And here I hit trouble.
 To add the animated views to the button, I needed <strong>a</strong> view to add them to. But there are none exposed.
 There <em>are</em> views there, there must be, because I can see them.</p>
@@ -199,7 +199,7 @@ I did what I normally do in situations like this, where I&rsquo;m confused, frus
 </p>
 <p>The variables pane here shows my TabBarItem (<strong>self</strong>) at the top. And by clicking the arrow, it expands that TabBarItem&rsquo;s properties to show us details that aren&rsquo;t available through the class definition in the UIKit header.</p>
 <p>Now to go digging.</p>
-<h1 id="argh-cheology">Argh-cheology<a hidden class="anchor" aria-hidden="true" href="#argh-cheology">#</a></h1>
+<h2 id="argh-cheology">Argh-cheology<a hidden class="anchor" aria-hidden="true" href="#argh-cheology">#</a></h2>
 <p>Opening the properties, I saw something with potential. A <code>_view</code> item with a value of <code>UITabBarButton</code>. What&rsquo;s a UITabBarButton? There&rsquo;s no Apple Documentation available (And I use <a href="https://kapeli.com/dash">Dash</a>, if it&rsquo;s isn&rsquo;t there, then <em>it isn&rsquo;t there</em>.)</p>
 <p>What am I looking at?</p>
 <p>A <code>UITabBarButton</code> is an internal UIKit object, one of the building blocks of how the UITabBarItem is put together. I needed a way to be able to investigate whether I could use this in my code as a reference point for adding my animated view.</p>
@@ -229,7 +229,7 @@ And even better, it uses one of the wonders of Cocoa/Objective-C under the hood 
 <p>I had a way to finally get access to <strong>a</strong> view on this item! All I had left was to add my animation view as a subview, start it animating and I could go back to my JIRA board with confidence, proudly moving my ticket to Code Review column.</p>
 <p><em>Except &hellip;</em></p>
 <hr>
-<h1 id="natural-selection">Natural Selection<a hidden class="anchor" aria-hidden="true" href="#natural-selection">#</a></h1>
+<h2 id="natural-selection">Natural Selection<a hidden class="anchor" aria-hidden="true" href="#natural-selection">#</a></h2>
 <p>Selected state. How do I keep track of the selected state?
 I didn&rsquo;t want to expose anything outside of the TabBarItem to force the change of state - for example, no extension to my animate function like <code>animate(isSelected: Bool)</code>. I wanted this object to behave like it&rsquo;s parent class, handling the switch between modes itself.</p>
 <p>To do this, I could leverage <em>Key-Value Observers</em>.</p>
@@ -278,7 +278,7 @@ This is an assumption, but it could be that the underlying (not publically acces
 <p><code>view.tabBar.selectedItem</code></p>
 <p>Inspecting properties of the TabBarItem itself yielded no usable options, but I was able to reference the parent TabBar for the item and infer the selectedItem of the <em>whole</em> TabBar.</p>
 <hr>
-<h1 id="observe-and-report">Observe and Report<a hidden class="anchor" aria-hidden="true" href="#observe-and-report">#</a></h1>
+<h2 id="observe-and-report">Observe and Report<a hidden class="anchor" aria-hidden="true" href="#observe-and-report">#</a></h2>
 <p>I could now respond to the changes of state of the TabBar by adding the observer in the <code>init()</code> of my custom TabBarItem.</p>
 <p>In my responding function, I would be able to call my <code>animate()</code> function to add the right Lottie view to the item for the current selected state. I could use once more the <code>value(forKey:&quot;_view._selected)</code> function to get the value.</p>
 <p>All that was left to do was to clean up my observers - making sure they were removed on deinit - and ensure that my Lottie animation view was only ever present once in the view hierarchy. The last thing I wanted was to be adding <em>new</em> UIViews each time the tab bar state changed.</p>
@@ -327,7 +327,7 @@ This is an assumption, but it could be that the underlying (not publically acces
         }
     }
 }
-</code></pre><h1 id="wrap-up">Wrap Up<a hidden class="anchor" aria-hidden="true" href="#wrap-up">#</a></h1>
+</code></pre><h2 id="wrap-up">Wrap Up<a hidden class="anchor" aria-hidden="true" href="#wrap-up">#</a></h2>
 <p>We sometimes forget that Swift is built on top of, and alongside, incredibly powerful features of the Objective-C language. Although it can be dangerous, being able to leverage inspection and access of objects in our projects in an &ldquo;indirect&rdquo; direct way can offer great results and unique experiences. On the odd occasion, it can be useful to look back over our old Objective-C books and reference guides to appreciate how flexible a language it can be.</p>
 <p>We do have to exercise caution, by not having direct access to some of these hidden attributes, we need to make sure we are defensive in how we apply these techniques in case future iOS updates mean that this approach no longer works.</p>
 <p>I also recognise that I can&rsquo;t know everything ahead of time, but am always discovering new ways of doing things and new features of the platform.</p>
