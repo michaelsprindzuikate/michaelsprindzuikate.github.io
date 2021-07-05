@@ -6,7 +6,18 @@
     <description>Recent content on michael s.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 01 Jun 2021 12:00:00 +0000</lastBuildDate><atom:link href="https://michaelsprindzuikate.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Jul 2021 12:00:00 +0000</lastBuildDate><atom:link href="https://michaelsprindzuikate.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Behind Generics: Part Two</title>
+      <link>https://michaelsprindzuikate.github.io/posts/filter-tips/</link>
+      <pubDate>Thu, 01 Jul 2021 12:00:00 +0000</pubDate>
+      
+      <guid>https://michaelsprindzuikate.github.io/posts/filter-tips/</guid>
+      <description>Back in March, I dived into how the generic Map function in Swift works under the hood. There are many other useful functional&amp;hellip;erm&amp;hellip;functions in the Foundation framework that are valuable tools for us developers, which warranted a look into another favourite - Filter.
+Clarify First of all, let&amp;rsquo;s see how the built-in Filter function works.
+let items = [1,2,3,4,5,6,7,8] let filteredResults = items.filter { $0 &amp;gt; 4 } print(filteredResults) // output is [5,6,7,8] Like in the Map example, we see that filter takes in a parameter of a closure and returns a new collection that is a subset of the original collection.</description>
+    </item>
+    
     <item>
       <title>KeyPath to Enlightenment</title>
       <link>https://michaelsprindzuikate.github.io/posts/keypath-to-enlightenment/</link>
