@@ -6,7 +6,40 @@
     <description>Recent content in Posts on michael s.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 01 May 2021 12:00:00 +0000</lastBuildDate><atom:link href="https://michaelsprindzuikate.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 01 Aug 2021 12:00:00 +0000</lastBuildDate><atom:link href="https://michaelsprindzuikate.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Seniority Complex</title>
+      <link>https://michaelsprindzuikate.github.io/posts/seniority-complex/</link>
+      <pubDate>Sun, 01 Aug 2021 12:00:00 +0000</pubDate>
+      
+      <guid>https://michaelsprindzuikate.github.io/posts/seniority-complex/</guid>
+      <description>PR review? I&amp;#39;ll be there in a minute...  Occasionally on those warm summer evenings, before the sun has set behind the garden fence, the bees visiting one last flower in a long day&amp;rsquo;s work, the clouds casting a faint memory of white across an increasingly purple sky.. I will sit on the patio and wonder to myself:
+ Oh dear, I&amp;rsquo;m old.
+ I&amp;rsquo;ve been adding &amp;ldquo;Senior iOS Developer&amp;rdquo; as my job title for six years now, and since my initial promotion to the role, I&amp;rsquo;ve never been that sure of what it actually means.</description>
+    </item>
+    
+    <item>
+      <title>Behind Generics: Part Two</title>
+      <link>https://michaelsprindzuikate.github.io/posts/filter-tips/</link>
+      <pubDate>Thu, 01 Jul 2021 12:00:00 +0000</pubDate>
+      
+      <guid>https://michaelsprindzuikate.github.io/posts/filter-tips/</guid>
+      <description>Back in March, I dived into how the generic Map function in Swift works under the hood. There are many other useful functional&amp;hellip;erm&amp;hellip;functions in the Foundation framework that are valuable tools for us developers, which warranted a look into another favourite - Filter.
+Clarify First of all, let&amp;rsquo;s see how the built-in Filter function works.
+let items = [1,2,3,4,5,6,7,8] let filteredResults = items.filter { $0 &amp;gt; 4 } print(filteredResults) // output is [5,6,7,8] Like in the Map example, we see that filter takes in a parameter of a closure and returns a new collection that is a subset of the original collection.</description>
+    </item>
+    
+    <item>
+      <title>KeyPath to Enlightenment</title>
+      <link>https://michaelsprindzuikate.github.io/posts/keypath-to-enlightenment/</link>
+      <pubDate>Tue, 01 Jun 2021 12:00:00 +0000</pubDate>
+      
+      <guid>https://michaelsprindzuikate.github.io/posts/keypath-to-enlightenment/</guid>
+      <description>This is a story of a promise made.
+When planning a piece of work, the last thing I want to do is set an expectation that I can&amp;rsquo;t match. By now, I figure I should know iOS, UIKit, Foundation, all of it inside out. I have been doing this for a while now, you know, I should be an authority.
+When I say &amp;ldquo;Sure, we can add subviews to a UITabBarItem&amp;rdquo;, I mean it.</description>
+    </item>
+    
     <item>
       <title>Refactoring</title>
       <link>https://michaelsprindzuikate.github.io/posts/refactoring-into-the-equation/</link>
