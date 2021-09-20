@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>JSON and the Custom Decoding Strategy  | michael s.</title>
+
+<meta name="keywords" content="" />
+<meta name="description" content="by Apollonius">
+<meta name="author" content="">
+<link rel="canonical" href="https://michaelsprindzuikate.github.io/posts/json-custom-key-decoding/" />
+<link href="/assets/css/stylesheet.min.2e1fbb977451e874d76d824bd1c7ed2a.css" integrity="md5-Lh&#43;7l3RR6HTXbYJL0cftKg==" rel="preload stylesheet"
+    as="style">
+
+<link rel="icon" href="https://michaelsprindzuikate.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://michaelsprindzuikate.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://michaelsprindzuikate.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://michaelsprindzuikate.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://michaelsprindzuikate.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.81.0" />
+
+
+<meta property="og:title" content="JSON and the Custom Decoding Strategy " />
+<meta property="og:description" content="by Apollonius" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://michaelsprindzuikate.github.io/posts/json-custom-key-decoding/" />
+<meta property="article:published_time" content="2021-09-19T12:00:00+00:00" />
+<meta property="article:modified_time" content="2021-09-19T12:00:00+00:00" /><meta property="og:site_name" content="michael s." />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="JSON and the Custom Decoding Strategy "/>
+<meta name="twitter:description" content="by Apollonius"/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "JSON and the Custom Decoding Strategy ",
+  "name": "JSON and the Custom Decoding Strategy ",
+  "description": "I wasn\u0026amp;#39;t sure how to represent JSON in a metaphorical way, so here\u0026amp;#39;s a nice picture of the countryside instead.  For anyone that\u0026amp;rsquo;s been using Swift since version 4, …",
+  "keywords": [
+    
+  ],
+  "articleBody": "  I wasn't sure how to represent JSON in a metaphorical way, so here's a nice picture of the countryside instead.  For anyone that’s been using Swift since version 4, then you will almost certainly made use of the codable protocol in order to encode and/or decode JSON into data models. In its simplest terms, by adopting decodable on your class or struct allows your data to be parsed and mapped with minimal effort.\nstruct Album: Decodable { let artist: String let title: String let tracks: [AlbumTrack] let yearOfRelease: String } struct AlbumTrack: Decodable { let position: Int let title: String } This magical…erm… magic is perfect when your data structure properties match the JSON keys provided in the response, allowing 1:1 mapping, including nested collections - as with the case of Album having a collection of AlbumTrack objects.\nThings start to become somewhat more complicated when the response key format doesn’t match the desired naming convention for your data structures. For example, if the “year of release” property was returned as year_of_release in the JSON, but you want to maintain “camel case” properties, how would you connect the two?\n(Coding) Key to the Castle All is not lost.\nPart of the Encodable set of protocols is the ability to provide custom keys to the decoder to help with converting “this_value” into “thisValue”. This is done by creating an enum which conforms to the CodingKey protocol. In simple terms, this looks something like:\nstruct AlbumTrack: Decodable { let position: Int let title: String enum keys: String, CodingKey { case position = \"track_position\" case title = \"track_title\" } } Except, it doesn’t just look like that. If you were to try to decode a json response using JSONDecoder().decode(AlbumTrack.self, from: jsonData) you’d be presented with an error explaining that\n Hey, you told me that there were keys called “position” and “title”, but there aren’t! You lied!\n And this is because there has to be a relationship between the CodingKey’s and the decoding, which there isn’t as yet. This is done by writing a custom decoding initialiser where the CodingKey’s can be used.\ninit(from decoder: Decoder) throws { let container = try decoder.container(keyedBy: keys.self) position = try container.decode(Int.self, forKey: .position) title = try container.decode(String.self, forKey: .title) } This is great - it allows us to translate keys between the response and our structure and offer an opportunity to apply logic or alternative values based on the data returned. Although, I am not fond of this approach. For one thing, it makes the mapping that little more complex and less readable.\n There is duplication for each key that we need (container.decode())- not too bad for a model with two properties but can quickly become tiresome for larger data sets. If the response contains mixed format keys, with a combination of snake/camel cases, even if the returned key matches the property name in my model, I still have to add it to the CodingKey enum, which feels redundant. It can end up making what was a nice simple, easy to read and follow structure become overloaded. Even though the CodingKey’s and decoding initialiser can be moved into an extension, it’s still introducing more code.  An Alternative Strategy If you are dealing with a JSON response that has keys returned using snake_case and you want the data structure properties to be all camelCase then you can leverage a property on the JSON Decoder class called keyDecodingStrategy. It provides you with a way to apply the formatting rule to the decoder, so that it handles each key in the same way.\nOf course, this will only be applicable if you can guarantee that all of your keys are in the same format, but it does mean that you can clean up your data structure by removing the custom initialiser and CodingKey conformance.\nIn practise, it looks like this:\nlet snakeCaseJSONData = \"\"\" { \"snake_name\": \"steve\", \"snake_length\": \"6cm\", \"snake_colour\": \"silver\" } \"\"\".data(using: .utf8) struct Snake: Decodable { let snakeName: String let snakeLength: String let snakeColour: String } let decoder = JSONDecoder() decoder.keyDecodingStrategy = .convertFromSnakeCase let snakeModel = try decoder.decode(Snake.self, from: snakeCaseJSONData!) print(snakeModel) Dash Bored We’ve seen that Codable has support for automatic key-property mapping, and providing the Decoder with a way to automatically convert from Snake Case keys to Camel Case properties, but what if our response has a different key format? What if it’s the dreaded Dash-Case?\nIf we were to receive a response like this:\n{ \"dash-name\": \"steve\", \"dash-length\": \"6cm\", \"dash-colour\": \"silver\" } I’d like to have my Struct use the text after the - to make it less verbose.\nstruct Dasher: Decodable { let name: String let length: String let colour: String } In this instance, we could go back to taking advantage of the CodingKey enum and init(from decoder: Decoder) function and call it a day! But as I mentioned before, that could mean the lines of code ramp up considerably and quickly.\nWhat we can do instead is take advantage of the ability to adopt the .custom variant on keyDecodingStrategy and give the decoder a way to handle translation in a single place.\nUsing the Custom decoding strategy, we have to do two things. Firstly, we need to create a struct (not an enum like the prior example) that conform to the CodingKey protocol. This will get passed into the Decoder to parse the JSON:\nstruct MyCodingKey: CodingKey { var stringValue: String init?(stringValue: String) { self.stringValue = stringValue } var intValue: Int? init?(intValue: Int) { return nil } } The next thing is to implement the custom strategy itself. This is done with a closure which passes in an array of keys (hops down the JSON tree to the particular key being decoded) and returns an instance of CodingKey, in this example, our MyCodingKey.\nHere, we parse the string, convert it into our desired key format and return it.\ndecoder.keyDecodingStrategy = .custom({ keys in let lastKey = keys.last! let segment = lastKey.stringValue.split(separator: \"-\").last let updatedKey = segment { String($0) } ?? \"\" return MyCodingKey(stringValue: updatedKey) ?? lastKey }) The custom decoding strategy can be as complex as required. If you may have to handle multiple key formats in a response (and if so, maybe it’s worth talking to your API developers first!) then you can do multiple translations of the JSON key before returning it.\nWe can now get the best of both worlds in keeping our data models simple and clean and giving ourselves the flexibility to handle non-ideal key conventions\nApple Doc’s on the custom decoding strategy\nExtension When using this in a project and decoding multiple API responses, you may not wish to duplicate the above each time you create a JSONDecoder. A nice way to encapsulate this is to create an extension function that applies the custom decoding strategy.\nextension JSONDecoder { func dashDecoding() - JSONDecoder { self.keyDecodingStrategy = .custom({ keys in let lastKey = keys.last! let lastKeySegment = lastKey.stringValue.split(separator: \"_\").last let updatedKey = lastKeySegment.map { String($0) } ?? \"\" return MyCodingKey(stringValue: updatedKey) ?? lastKey }) return self } } let result = JSONDecoder().dashDecoding().decode(Dasher.self, from: jsonData) You could even create multiple custom decoding functions that can be applied on a per API basis, depending on your needs. All the while, keeping your data models clean and consistent.\nWrap Up Often when it comes to decoding JSON, we have a decision to make between simplicity and adaptability. Sometimes we may find that using a CodingKey enum will be most applicable, usually when we wish to augment the data model with custom logic, but that approach can lead to a lot of boilerplate and duplication.\nI would suggest that it’s preferable to ensure that all data models have a consistent naming convention to make it easier for developers to use the data. Especially in the scenario of building a framework to be used across projects, consistency is vital.\nBy taking advantage of the .custom decoding strategy, we can defer the complexity into a common place and build an implementation that allows us to keep a separation between an object that represents data and the mechanics of creating that object from a JSON response.\n",
+  "wordCount" : "1351",
+  "inLanguage": "en",
+  "datePublished": "2021-09-19T12:00:00Z",
+  "dateModified": "2021-09-19T12:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://michaelsprindzuikate.github.io/posts/json-custom-key-decoding/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "michael s.",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://michaelsprindzuikate.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+
+
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+<noscript>
+    <style type="text/css">
+        .theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://michaelsprindzuikate.github.io" accesskey="h" title="michael s. (Alt + H)">michael s.</a>
+            <span class="logo-switches">
+                <span class="theme-toggle" title="(Alt + T)">
+                    <a id="theme-toggle" accesskey="t">
+                        <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </a>
+                </span>
+                
+            </span>
+        </div>
+        <ul class="menu" id="menu" onscroll="menu_on_scroll()"></ul>
+    </nav>
+</header>
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">
+      JSON and the Custom Decoding Strategy 
+    </h1>
+    <div class="post-description">
+      by Apollonius
+    </div>
+    <div class="post-meta">September 19, 2021&nbsp;·&nbsp;7 min
+
+    </div>
+  </header> 
+
+  <div class="post-content">
+<p>
+  <figure>
+    <img src="/images/json-decoding/landscape.jpg#center" alt="A lovely picture of a lush, green valley in spring with blue sky. Credit: &amp;ldquo;landscape&amp;rdquo; by barnyz is licensed with CC BY-NC-ND 2.0.">
+    <div class="caption">I wasn&#39;t sure how to represent JSON in a metaphorical way, so here&#39;s a nice picture of the countryside instead.</div>
+  </figure>
+</p>
+<p>For anyone that&rsquo;s been using Swift since version 4, then you will almost certainly made use of the <code>codable</code> protocol in order to encode and/or decode JSON into data models.
+In its simplest terms, by adopting <code>decodable</code> on your class or struct allows your data to be parsed and mapped with minimal effort.</p>
+<pre><code>struct Album: Decodable {
+    let artist: String
+    let title: String
+    let tracks: [AlbumTrack]
+    let yearOfRelease: String
+}
+struct AlbumTrack: Decodable {
+    let position: Int
+    let title: String
+}
+</code></pre><p>This magical&hellip;erm&hellip; <em>magic</em> is perfect when your data structure properties match the JSON keys provided in the response, allowing 1:1 mapping, including nested collections - as with the case of <code>Album</code> having a collection of <code>AlbumTrack</code> objects.</p>
+<p>Things start to become somewhat more complicated when the response key format doesn&rsquo;t match the desired naming convention for your data structures. For example, if the &ldquo;year of release&rdquo; property was returned as <code>year_of_release</code> in the JSON, but you want to maintain &ldquo;camel case&rdquo; properties, how would you connect the two?</p>
+<h2 id="coding-key-to-the-castle">(Coding) Key to the Castle<a hidden class="anchor" aria-hidden="true" href="#coding-key-to-the-castle">#</a></h2>
+<p>All is not lost.</p>
+<p>Part of the <code>Encodable</code> set of protocols is the ability to provide custom keys to the decoder to help with converting <em>&ldquo;this_value&rdquo;</em> into <strong>&ldquo;thisValue&rdquo;</strong>. This is done by creating an <code>enum</code> which conforms to the <code>CodingKey</code> protocol. In simple terms, this looks something like:</p>
+<pre><code>struct AlbumTrack: Decodable {
+    let position: Int
+    let title: String
+    
+    enum keys: String, CodingKey {
+        case position = &quot;track_position&quot;
+        case title = &quot;track_title&quot;
+    }
+}
+</code></pre><p>Except, it doesn&rsquo;t <em>just</em> look like that. If you were to try to decode a json response using <code>JSONDecoder().decode(AlbumTrack.self, from: jsonData)</code> you&rsquo;d be presented with an error explaining that</p>
+<blockquote>
+<p>Hey, <strong>you</strong> told me that there were keys called &ldquo;position&rdquo; and &ldquo;title&rdquo;, but there aren&rsquo;t! You lied!</p>
+</blockquote>
+<p>And this is because there has to be a relationship between the CodingKey&rsquo;s and the decoding, which there isn&rsquo;t as yet.
+This is done by writing a custom decoding initialiser where the CodingKey&rsquo;s can be used.</p>
+<pre><code>init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: keys.self)
+    position = try container.decode(Int.self, forKey: .position)
+    title = try container.decode(String.self, forKey: .title)
+}
+</code></pre><p>This is great - it allows us to translate keys between the response and our structure and offer an opportunity to apply logic or alternative values based on the data returned.
+Although, I am not fond of this approach. For one thing, it makes the mapping that little more complex and less readable.</p>
+<ul>
+<li>There is duplication for each key that we need (<code>container.decode()</code>)- not too bad for a model with two properties but can quickly become tiresome for larger data sets.</li>
+<li>If the response contains <em>mixed</em> format keys, with a combination of snake/camel cases, even if the returned key matches the property name in my model, I <strong>still</strong> have to add it to the <code>CodingKey</code> enum, which feels redundant.</li>
+<li>It can end up making what was a nice simple, easy to read and follow structure become overloaded. Even though the CodingKey&rsquo;s and decoding initialiser can be moved into an extension, it&rsquo;s still introducing more code.</li>
+</ul>
+<h2 id="an-alternative-strategy">An Alternative Strategy<a hidden class="anchor" aria-hidden="true" href="#an-alternative-strategy">#</a></h2>
+<p>If you are dealing with a JSON response that has keys returned using <code>snake_case</code> and you want the data structure properties to be all <code>camelCase</code> then you can leverage a property on the JSON Decoder class called <code>keyDecodingStrategy</code>.
+It provides you with a way to apply the formatting rule to the decoder, so that it handles each key in the same way.</p>
+<p>Of course, this will only be applicable if you can guarantee that all of your keys are in the same format, but it does mean that you can clean up your data structure by removing the custom initialiser and <code>CodingKey</code> conformance.</p>
+<p>In practise, it looks like this:</p>
+<pre><code>let snakeCaseJSONData = &quot;&quot;&quot;
+    {
+        &quot;snake_name&quot;: &quot;steve&quot;,
+        &quot;snake_length&quot;: &quot;6cm&quot;,
+        &quot;snake_colour&quot;: &quot;silver&quot;
+    }
+    &quot;&quot;&quot;.data(using: .utf8)
+
+struct Snake: Decodable {
+    let snakeName: String
+    let snakeLength: String
+    let snakeColour: String
+}
+
+let decoder = JSONDecoder()
+decoder.keyDecodingStrategy = .convertFromSnakeCase
+let snakeModel = try decoder.decode(Snake.self, from: snakeCaseJSONData!)
+print(snakeModel)
+</code></pre><h2 id="dash-bored">Dash Bored<a hidden class="anchor" aria-hidden="true" href="#dash-bored">#</a></h2>
+<p>We&rsquo;ve seen that <code>Codable</code> has support for automatic key-property mapping, and providing the Decoder with a way to automatically convert from Snake Case keys to Camel Case properties, but what if our response has a different key format? What if it&rsquo;s the dreaded <em>Dash-Case</em>?</p>
+<p>If we were to receive a response like this:</p>
+<pre><code>{
+    &quot;dash-name&quot;: &quot;steve&quot;,
+    &quot;dash-length&quot;: &quot;6cm&quot;,
+    &quot;dash-colour&quot;: &quot;silver&quot;
+}
+</code></pre><p>I&rsquo;d like to have my Struct use the text <em>after</em> the <code>-</code> to make it less verbose.</p>
+<pre><code>struct Dasher: Decodable {
+    let name: String
+    let length: String
+    let colour: String
+}
+</code></pre><p>In this instance, we could go back to taking advantage of the <code>CodingKey</code> enum and <code>init(from decoder: Decoder)</code> function and call it a day! But as I mentioned before, that could mean the lines of code ramp up considerably and quickly.</p>
+<p>What we can do instead is take advantage of the ability to adopt the <code>.custom</code> variant on <code>keyDecodingStrategy</code> and give the decoder a way to handle translation in a single place.</p>
+<p>Using the Custom decoding strategy, we have to do <strong>two</strong> things. Firstly, we need to create a struct (not an enum like the prior example) that conform to the <code>CodingKey</code> protocol. This will get passed into the <code>Decoder</code> to parse the JSON:</p>
+<pre><code>struct MyCodingKey: CodingKey {
+    var stringValue: String
+    
+    init?(stringValue: String) {
+        self.stringValue = stringValue
+    }
+    
+    var intValue: Int?
+    
+    init?(intValue: Int) {
+        return nil
+    }
+}
+</code></pre><p>The next thing is to implement the custom strategy itself. This is done with a closure which passes <em>in</em> an array of keys (hops down the JSON tree to the particular key being decoded) and returns an instance of <code>CodingKey</code>, in this example, our <code>MyCodingKey</code>.</p>
+<p>Here, we parse the string, convert it into our desired key format and return it.</p>
+<pre><code>decoder.keyDecodingStrategy = .custom({ keys in
+    let lastKey = keys.last!
+    let segment = lastKey.stringValue.split(separator: &quot;-&quot;).last
+    let updatedKey = segment { String($0) } ?? &quot;&quot;
+
+    return MyCodingKey(stringValue: updatedKey) ?? lastKey
+})
+</code></pre><p>The custom decoding strategy can be as complex as required. If you may have to handle multiple key formats in a response (and if so, maybe it&rsquo;s worth talking to your API developers first!) then you can do multiple translations of the JSON key before returning it.</p>
+<p>We can now get the best of both worlds in keeping our data models simple and clean and giving ourselves the flexibility to handle non-ideal key conventions</p>
+<p><a href="https://developer.apple.com/documentation/foundation/jsondecoder/keydecodingstrategy">Apple Doc&rsquo;s on the custom decoding strategy</a></p>
+<h2 id="extension">Extension<a hidden class="anchor" aria-hidden="true" href="#extension">#</a></h2>
+<p>When using this in a project and decoding multiple API responses, you may not wish to duplicate the above each time you create a <code>JSONDecoder</code>. A nice way to encapsulate this is to create an extension function that applies the custom decoding strategy.</p>
+<pre><code>extension JSONDecoder {
+    
+    func dashDecoding() -&gt; JSONDecoder {
+        self.keyDecodingStrategy = .custom({ keys in
+            let lastKey = keys.last!
+            let lastKeySegment = lastKey.stringValue.split(separator: &quot;_&quot;).last
+            let updatedKey = lastKeySegment.map { String($0) } ?? &quot;&quot;
+            return MyCodingKey(stringValue: updatedKey) ?? lastKey
+        })
+        
+        return self
+    }
+}
+
+let result = JSONDecoder().dashDecoding().decode(Dasher.self, from: jsonData)
+</code></pre><p>You could even create multiple custom decoding functions that can be applied on a per API basis, depending on your needs. All the while, keeping your data models clean and consistent.</p>
+<h2 id="wrap-up">Wrap Up<a hidden class="anchor" aria-hidden="true" href="#wrap-up">#</a></h2>
+<p>Often when it comes to decoding JSON, we have a decision to make between simplicity and adaptability. Sometimes we may find that using a <code>CodingKey</code> enum will be most applicable, usually when we wish to augment the data model with custom logic, but that approach can lead to a <em>lot</em> of boilerplate and duplication.</p>
+<p>I would suggest that it&rsquo;s preferable to ensure that all data models have a consistent naming convention to make it easier for developers to use the data. Especially in the scenario of building a framework to be used across projects, consistency is vital.</p>
+<p>By taking advantage of the <code>.custom</code> decoding strategy, we can defer the complexity into a common place and build an implementation that allows us to keep a separation between an object that <em>represents</em> data and the mechanics of <em>creating</em> that object from a JSON response.</p>
+
+</div>
+  <footer class="post-footer">
+  </footer>
+</article>
+    </main><footer class="footer">
+    <span>&copy; 2021 <a href="https://michaelsprindzuikate.github.io">michael s.</a></span>
+    <span>&middot;</span>
+    <span>Powered by <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a></span>
+    <span>&middot;</span>
+    <span>Theme <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a></span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)">
+    <button class="top-link" id="top-link" type="button" accesskey="g">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+            <path d="M12 6H0l6-6z" />
+        </svg>
+    </button>
+</a>
+
+
+
+<script defer src="/assets/js/highlight.min.216f8553b250c2e56350bfb871fa3afd.js" integrity="md5-IW&#43;FU7JQwuVjUL&#43;4cfo6/Q=="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<script>
+    window.onload = function () {
+        if (localStorage.getItem("menu-scroll-position")) {
+            document.getElementById('menu').scrollLeft = localStorage.getItem("menu-scroll-position");
+        }
+    }
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+    function menu_on_scroll() {
+        localStorage.setItem("menu-scroll-position", document.getElementById('menu').scrollLeft);
+    }
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+
+</body>
+
+</html>
