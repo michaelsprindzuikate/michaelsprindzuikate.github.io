@@ -6,7 +6,26 @@
     <description>Recent content in Posts on michael s.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 01 Aug 2021 12:00:00 +0000</lastBuildDate><atom:link href="https://michaelsprindzuikate.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 25 Oct 2021 10:00:00 +0000</lastBuildDate><atom:link href="https://michaelsprindzuikate.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Negative Thinking</title>
+      <link>https://michaelsprindzuikate.github.io/posts/negative-thinking/</link>
+      <pubDate>Mon, 25 Oct 2021 10:00:00 +0000</pubDate>
+      
+      <guid>https://michaelsprindzuikate.github.io/posts/negative-thinking/</guid>
+      <description>It&amp;#39;s a knot. It&amp;#39;ll all make sense in a minute, I promise.  You should know me by now, I like to weave a story, set the scene and/or derail a train of thought before it&amp;rsquo;s left the station.
+Anyway, oftentimes when developing we are faced with a teaser that stops us in our tracks, if even ever so briefly. It will be around logical operations and usually the sentence that enters our mind will be something like:</description>
+    </item>
+    
+    <item>
+      <title>JSON and the Custom Decoding Strategy </title>
+      <link>https://michaelsprindzuikate.github.io/posts/json-custom-key-decoding/</link>
+      <pubDate>Sun, 19 Sep 2021 12:00:00 +0000</pubDate>
+      
+      <guid>https://michaelsprindzuikate.github.io/posts/json-custom-key-decoding/</guid>
+      <description>I wasn&amp;#39;t sure how to represent JSON in a metaphorical way, so here&amp;#39;s a nice picture of the countryside instead.  For anyone that&amp;rsquo;s been using Swift since version 4, then you will almost certainly made use of the codable protocol in order to encode and/or decode JSON into data models. In its simplest terms, by adopting decodable on your class or struct allows your data to be parsed and mapped with minimal effort.</description>
+    </item>
+    
     <item>
       <title>Seniority Complex</title>
       <link>https://michaelsprindzuikate.github.io/posts/seniority-complex/</link>
