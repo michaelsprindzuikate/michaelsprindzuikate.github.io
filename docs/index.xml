@@ -6,7 +6,21 @@
     <description>Recent content on michael s.</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 25 Oct 2021 10:00:00 +0000</lastBuildDate><atom:link href="https://michaelsprindzuikate.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 01 Dec 2021 12:00:00 +0000</lastBuildDate><atom:link href="https://michaelsprindzuikate.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>A Festive Development</title>
+      <link>https://michaelsprindzuikate.github.io/posts/a-festive-development/</link>
+      <pubDate>Wed, 01 Dec 2021 12:00:00 +0000</pubDate>
+      
+      <guid>https://michaelsprindzuikate.github.io/posts/a-festive-development/</guid>
+      <description>&amp;lsquo;Twas the night before Christmas, when all through the house
+Not a creature was stirring, not even a mouse;
+Except, there was one person, sat at his desk
+Asking &amp;ldquo;why won&amp;rsquo;t this compile, I&amp;rsquo;m getting depressed&amp;rdquo;;
+ In the spirit of the season, why not add a little festive cheer to your apps with a little Snowglobe class that you can add to your view heirarchy!
+  Look! It&amp;#39;s snowing!</description>
+    </item>
+    
     <item>
       <title>Negative Thinking</title>
       <link>https://michaelsprindzuikate.github.io/posts/negative-thinking/</link>
